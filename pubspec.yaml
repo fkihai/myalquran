@@ -2,20 +2,44 @@ name: myalquran
 version: 1.0.0+1
 publish_to: none
 description: A new Flutter project.
-environment: 
-  sdk: '>=3.2.4 <4.0.0'
+environment:
+  sdk: ">=3.2.4 <4.0.0"
 
-dependencies: 
+dependencies:
   cupertino_icons: ^1.0.2
   get: 4.6.6
-  flutter: 
+  flutter:
     sdk: flutter
+  http: ^1.2.0
+  path_provider: ^2.1.2
+  sqflite: ^2.3.2
+  quran: ^1.2.4
+  scroll_to_index: ^3.0.1
+  google_fonts: ^6.2.0
+  just_audio: ^0.9.37
 
-dev_dependencies: 
+dev_dependencies:
   flutter_lints: ^2.0.0
-  flutter_test: 
+  flutter_test:
     sdk: flutter
 
-flutter: 
+flutter:
   uses-material-design: true
-
+  assets:
+    - assets/img/
+    - assets/lotties/
+    - assets/json/
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+    - family: Lpmq
+      fonts:
+        - asset: assets/fonts/lpmq.ttf
+          weight: 400
