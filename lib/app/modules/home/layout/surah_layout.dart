@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'package:quran/quran.dart' as quran;
+
 import '../../../constant/color.dart';
+import '../../../constant/size_config.dart';
 import '../../../data/model/surah.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/home_controller.dart';
@@ -11,6 +14,7 @@ class SurahLayout extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+    final SizeConfig sizeConfig = SizeConfig(context);
     return FutureBuilder<List<Surah>>(
       future: controller.getAllSurah(),
       builder: (context, snapshot) {
@@ -39,46 +43,43 @@ class SurahLayout extends GetView<HomeController> {
                   });
                 },
                 child: ListTile(
-                  leading: Container(
-                    height: 70,
-                    width: 30,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/img/list.png'),
-                        fit: BoxFit.contain,
+                    leading: Text(
+                      quran.getVerseEndSymbol(surah.nomor!.toInt()),
+                      style: const TextStyle(
+                        color: appBlueLight1,
+                        fontSize: 27,
                       ),
                     ),
-                    child: Center(
+                    title: Text(
+                      '${surah.nama}',
+                      style: const TextStyle(
+                        fontFamily: 'Lpmq',
+                        color: appBlueLight1,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 5),
                       child: Text(
-                        '${surah.nomor}',
+                        '${surah.jumlahAyat} ayat | ${surah.tempatTurun}',
                         style: const TextStyle(
-                          color: appBlack,
+                          color: appGrey,
+                          fontSize: 14,
                         ),
                       ),
                     ),
-                  ),
-                  title: Text(
-                    '${surah.namaLatin}',
-                    style: const TextStyle(
-                      color: appBlack,
-                    ),
-                  ),
-                  subtitle: Text(
-                    '${surah.jumlahAyat} ayat | ${surah.tempatTurun}',
-                    style: const TextStyle(
-                      color: appBlueLight1,
-                      fontSize: 14,
-                    ),
-                  ),
-                  trailing: Text(
-                    '${surah.nama}',
-                    style: const TextStyle(
-                      fontFamily: 'Lpmq',
-                      color: appBlack,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
+                    trailing: CircleAvatar(
+                      backgroundColor: appBlueLight1,
+                      radius: sizeConfig.getProportionateScreenWidth(15),
+                      child: IconButton(
+                        iconSize: sizeConfig.getProportionateScreenWidth(15),
+                        onPressed: () {},
+                        alignment: Alignment.center,
+                        color: appWhite,
+                        icon: const Icon(Icons.play_arrow),
+                      ),
+                    )),
               );
             },
           ),

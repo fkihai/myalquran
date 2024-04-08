@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:myalquran/app/constant/color.dart';
 import 'package:myalquran/app/modules/widget/modal_verses.dart';
 import 'package:quran/quran.dart' as quran;
 
-import '../../constant/color.dart';
+// import '../../constant/color.dart';
 import '../../constant/size_config.dart';
 import '../../data/model/detail_surah.dart';
 import '../detail_surah/controllers/detail_surah_controller.dart';
@@ -58,7 +59,7 @@ class VersesView extends GetView<DetailSurahController> {
                                 text: '${ayat.ar} ',
                                 style: const TextStyle(
                                   fontFamily: 'Lpmq',
-                                  color: appBlack,
+                                  color: appBlueLight1,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   wordSpacing: 1.0,
@@ -93,7 +94,7 @@ class VersesView extends GetView<DetailSurahController> {
                             child: Text(
                               "${ayat.tr}",
                               style: const TextStyle(
-                                  fontSize: 13, color: appBlueLight2),
+                                  fontSize: 13, color: appBlueLight1),
                               textAlign: TextAlign.start,
                             ),
                           ),

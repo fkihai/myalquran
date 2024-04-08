@@ -28,10 +28,11 @@ class ModalVerses extends DetailSurahController {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: sizeConfig.getProportionateScreenHeight(5)),
               Center(
                 child: Container(
                   width: sizeConfig.getProportionateScreenWidth(100),
-                  height: sizeConfig.getProportionateScreenHeight(8),
+                  height: sizeConfig.getProportionateScreenHeight(7),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade300,
                     borderRadius: BorderRadius.circular(10),
@@ -85,7 +86,7 @@ class TileFeature extends StatelessWidget {
           ListTile(
             leading: Icon(
               icon,
-              color: appBlueLight2,
+              color: appBlueLight1,
               size: sizeConfig.getProportionateScreenWidth(30),
             ),
             title: Text(

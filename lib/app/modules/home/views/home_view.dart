@@ -69,7 +69,7 @@ class HomeView extends GetView<HomeController> {
                 SizedBox(height: sizeConfig.getProportionateScreenHeight(10)),
                 const SearchField(),
                 SizedBox(height: sizeConfig.getProportionateScreenHeight(20)),
-                TabBar.secondary(indicatorColor: appBlueLight2, tabs: [
+                TabBar.secondary(indicatorColor: appBlueLight1, tabs: [
                   Tab(
                     child: SizedBox(
                       height: sizeConfig.getProportionateScreenHeight(30),

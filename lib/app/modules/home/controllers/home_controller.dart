@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
@@ -14,10 +15,10 @@ class HomeController extends GetxController {
   DatabaseManager databaseManager = DatabaseManager.instance;
 
   Future<List<Surah>> getAllSurah() async {
-    Uri url = Uri.parse('${EndPoint.baseUrl}${EndPoint.surah}');
-    var res = await http.get(url);
-
-    List data = json.decode(res.body);
+    String jsonString = await rootBundle.loadString(
+      'assets/json/allSurah.json',
+    );
+    List data = json.decode(jsonString);
 
     if (data.isEmpty) {
       return [];
