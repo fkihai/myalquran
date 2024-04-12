@@ -5,12 +5,10 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
 
-import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
 import '../../../data/db/bookmark.dart';
 import '../../../data/model/detail_surah.dart';
 import '../../../data/model/surah.dart';
-import '../../../data/remote/end_point.dart';
 
 class DetailSurahController extends GetxController {
   final player = AudioPlayer();
@@ -47,11 +45,12 @@ class DetailSurahController extends GetxController {
   Future<DetailSurah> getAllDetailSurah(Map<String, dynamic> surah) async {
     int? numberOfSurah = surah['numberOfSurah'];
     int? indexVersesOnSurah = surah['indexVersesOnSurah'];
-    Uri url = Uri.parse(
-      '${EndPoint.baseUrl}${EndPoint.surah}$numberOfSurah',
+
+    // With Json FIle
+    String jsonString = await rootBundle.loadString(
+      'assets/surah/$numberOfSurah.json',
     );
-    var res = await http.get(url);
-    Map<String, dynamic> data = json.decode(res.body);
+    Map<String, dynamic> data = json.decode(jsonString);
     indexVersesOnSurah == null
         ? null
         : autoScrollController.scrollToIndex(
@@ -63,9 +62,10 @@ class DetailSurahController extends GetxController {
 
   Future<List<Surah>> getListSurah() async {
     String jsonString = await rootBundle.loadString(
-      'assets/json/allSurah.json',
+      'assets/surah/all.json',
     );
     List data = json.decode(jsonString);
+
     if (data.isEmpty) {
       return [];
     } else {

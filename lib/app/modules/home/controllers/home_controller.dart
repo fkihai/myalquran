@@ -2,12 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
 
 import '../../../data/db/bookmark.dart';
 import '../../../data/model/surah.dart';
-import '../../../data/remote/end_point.dart';
 
 class HomeController extends GetxController {
   RxList<Surah> foundSurah = <Surah>[].obs;
@@ -16,10 +14,9 @@ class HomeController extends GetxController {
 
   Future<List<Surah>> getAllSurah() async {
     String jsonString = await rootBundle.loadString(
-      'assets/json/allSurah.json',
+      'assets/surah/all.json',
     );
     List data = json.decode(jsonString);
-
     if (data.isEmpty) {
       return [];
     } else {
