@@ -92,36 +92,38 @@ class HomeView extends GetView<HomeController> {
                   ),
                 ),
                 Obx(
-                  () => InkWell(
-                    onTap: () {
-                      Get.toNamed(Routes.DETAIL_SURAH, arguments: {
-                        'numberOfSurah':
-                            controller.dataLastRead['numberOfSurah'],
-                        'indexVersesOnSurah':
-                            controller.dataLastRead['indexVersesOnSurah'],
-                      });
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            color: Colors.grey.withOpacity(0.2),
-                            width: 2.0,
+                  () => controller.isLastRead.value
+                      ? InkWell(
+                          onTap: () {
+                            Get.toNamed(Routes.DETAIL_SURAH, arguments: {
+                              'numberOfSurah':
+                                  controller.dataLastRead['numberOfSurah'],
+                              'indexVersesOnSurah':
+                                  controller.dataLastRead['indexVersesOnSurah'],
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border(
+                                top: BorderSide(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  width: 2.0,
+                                ),
+                              ),
+                            ),
+                            child: ListTile(
+                              dense: true,
+                              leading: const Icon(Icons.book),
+                              title: const Text('Lanjutkan Membaca'),
+                              subtitle: Text(
+                                "QS. ${controller.dataLastRead['nameOfSurah']}: Ayat ${controller.dataLastRead['numberOfVerses']}",
+                              ),
+                              trailing: const Icon(Icons.chevron_right),
+                              visualDensity: VisualDensity.compact,
+                            ),
                           ),
-                        ),
-                      ),
-                      child: ListTile(
-                        dense: true,
-                        leading: const Icon(Icons.book),
-                        title: const Text('Lanjutkan Membaca'),
-                        subtitle: Text(
-                          "QS. ${controller.dataLastRead['nameOfSurah']}: Ayat ${controller.dataLastRead['numberOfVerses']}",
-                        ),
-                        trailing: const Icon(Icons.chevron_right),
-                        visualDensity: VisualDensity.compact,
-                      ),
-                    ),
-                  ),
+                        )
+                      : Container(),
                 )
               ],
             ),

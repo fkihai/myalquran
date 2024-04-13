@@ -13,6 +13,7 @@ class HomeController extends GetxController {
 
   DatabaseManager databaseManager = DatabaseManager.instance;
   RxMap dataLastRead = {}.obs;
+  RxBool isLastRead = false.obs;
 
   Future<List<Surah>> getAllSurah() async {
     String jsonString = await rootBundle.loadString(
@@ -68,7 +69,11 @@ class HomeController extends GetxController {
       'bookmark',
       where: 'lastRead = 1',
     );
-    dataLastRead.value = dataQuery.first;
+    if (dataQuery.isNotEmpty) {
+      isLastRead.value = true;
+      dataLastRead.value = dataQuery.first;
+    }
+    return;
   }
 
   @override
