@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:quran/quran.dart' as quran;
 
 import '../../../constant/color.dart';
-import '../../../constant/size_config.dart';
 import '../../../data/model/surah.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/home_controller.dart';
@@ -14,7 +13,6 @@ class SurahLayout extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    final SizeConfig sizeConfig = SizeConfig(context);
     return FutureBuilder<List<Surah>>(
       future: controller.getAllSurah(),
       builder: (context, snapshot) {
