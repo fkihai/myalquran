@@ -43,43 +43,41 @@ class SurahLayout extends GetView<HomeController> {
                   });
                 },
                 child: ListTile(
-                    leading: Text(
-                      quran.getVerseEndSymbol(surah.nomor!.toInt()),
+                  leading: Text(
+                    quran.getVerseEndSymbol(surah.nomor!.toInt()),
+                    style: const TextStyle(
+                      color: appBlueLight1,
+                      fontSize: 27,
+                    ),
+                  ),
+                  title: Text(
+                    '${surah.namaLatin}',
+                    style: const TextStyle(
+                      color: appBlueLight1,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: Text(
+                      '${surah.jumlahAyat} ayat | ${surah.tempatTurun}',
                       style: const TextStyle(
-                        color: appBlueLight1,
-                        fontSize: 27,
+                        color: appGrey,
+                        fontSize: 14,
                       ),
                     ),
-                    title: Text(
-                      '${surah.nama}',
-                      style: const TextStyle(
-                        fontFamily: 'Lpmq',
-                        color: appBlueLight1,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
+                  ),
+                  trailing: Text(
+                    '${surah.nama}',
+                    style: const TextStyle(
+                      fontFamily: 'Lpmq',
+                      color: appBlueLight1,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
                     ),
-                    subtitle: Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: Text(
-                        '${surah.jumlahAyat} ayat | ${surah.tempatTurun}',
-                        style: const TextStyle(
-                          color: appGrey,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                    trailing: CircleAvatar(
-                      backgroundColor: appBlueLight1,
-                      radius: sizeConfig.getProportionateScreenWidth(15),
-                      child: IconButton(
-                        iconSize: sizeConfig.getProportionateScreenWidth(15),
-                        onPressed: () {},
-                        alignment: Alignment.center,
-                        color: appWhite,
-                        icon: const Icon(Icons.play_arrow),
-                      ),
-                    )),
+                  ),
+                ),
               );
             },
           ),

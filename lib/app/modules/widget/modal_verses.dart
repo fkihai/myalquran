@@ -45,7 +45,7 @@ class ModalVerses extends DetailSurahController {
                   vertical: sizeConfig.getProportionateScreenHeight(5),
                   horizontal: sizeConfig.getProportionateScreenWidth(20),
                 ),
-                child: const Text('QS. Al baqarah: Ayat 2'),
+                child: Text('QS. ${surah.namaLatin}: Ayat ${ayat.nomor}'),
               ),
               TileFeature(
                 icon: Icons.book,

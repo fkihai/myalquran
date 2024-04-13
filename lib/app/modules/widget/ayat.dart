@@ -71,7 +71,7 @@ class VersesView extends GetView<DetailSurahController> {
                                       ayat.nomor!.toInt(),
                                     ),
                                     style: GoogleFonts.lateef(
-                                      color: appBlueLight2,
+                                      color: appBlueLight1,
                                       fontSize: 25,
                                       fontWeight: FontWeight.bold,
                                       wordSpacing: 1.0,

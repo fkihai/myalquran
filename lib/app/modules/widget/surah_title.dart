@@ -36,29 +36,29 @@ class SurahTitle extends StatelessWidget {
             color: appWhite,
           ),
         ),
-        // trailing: Text(
-        //   '${surah.nama}',
-        //   style: const TextStyle(
-        //     fontFamily: 'Lpmq',
-        //     fontSize: 30,
-        //     color: appWhite,
-        //   ),
-        // ),
-        trailing: Obx(
-          () => IconButton(
-            icon: controller.isPlayAudio.value
-                ? const Icon(Icons.stop)
-                : const Icon(Icons.play_arrow),
-            iconSize: 30,
-            color: Colors.white,
-            onPressed: () {
-              controller.isPlayAudio.value = !controller.isPlayAudio.value;
-              controller.isPlayAudio.value
-                  ? controller.playAudio('${surah.audio}')
-                  : controller.stopAudio();
-            },
+        trailing: Text(
+          '${surah.nama}',
+          style: const TextStyle(
+            fontFamily: 'Lpmq',
+            fontSize: 30,
+            color: appWhite,
           ),
         ),
+        //   trailing: Obx(
+        //     () => IconButton(
+        //       icon: controller.isPlayAudio.value
+        //           ? const Icon(Icons.stop)
+        //           : const Icon(Icons.play_arrow),
+        //       iconSize: 30,
+        //       color: Colors.white,
+        //       onPressed: () {
+        //         controller.isPlayAudio.value = !controller.isPlayAudio.value;
+        //         controller.isPlayAudio.value
+        //             ? controller.playAudio('${surah.audio}')
+        //             : controller.stopAudio();
+        //       },
+        //     ),
+        //   ),
       ),
     );
   }

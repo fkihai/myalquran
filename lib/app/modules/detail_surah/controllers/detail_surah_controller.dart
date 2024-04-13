@@ -1,6 +1,10 @@
 import 'dart:convert';
+import 'dart:ffi';
 
+import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:myalquran/app/data/remote/end_point.dart';
+import 'package:myalquran/app/modules/home/controllers/home_controller.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
@@ -9,12 +13,25 @@ import 'package:sqflite/sqflite.dart';
 import '../../../data/db/bookmark.dart';
 import '../../../data/model/detail_surah.dart';
 import '../../../data/model/surah.dart';
+import '../../utils/convert_string_index.dart';
+import '../../utils/internet_check.dart';
+import '../../utils/snackbar_message.dart';
 
-class DetailSurahController extends GetxController {
+class DetailSurahController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   final player = AudioPlayer();
-  RxBool isPlayAudio = false.obs;
+  late TabController tabController;
   DatabaseManager database = DatabaseManager.instance;
   AutoScrollController autoScrollController = AutoScrollController();
+
+  RxInt currentIndexTab = 0.obs;
+  RxBool isPlayAudio = false.obs;
+  String indexUrl = "";
+
+  final Map<String, dynamic> surahArgument = Get.arguments;
+  late int numberOfSurah = surahArgument['numberOfSurah'];
+
+  final lastreadController = Get.put(HomeController());
 
   void addBookmark(
     bool lastRead,
@@ -39,6 +56,8 @@ class DetailSurahController extends GetxController {
       },
     );
 
+    // Update Lastread
+    lastreadController.getLastRead();
     Get.back();
   }
 
@@ -68,19 +87,43 @@ class DetailSurahController extends GetxController {
 
     if (data.isEmpty) {
       return [];
-    } else {
-      List<Surah> surahList = data.map((e) => Surah.fromJson(e)).toList();
-      return surahList.reversed.toList();
     }
+    List<Surah> surahList = data.map((e) => Surah.fromJson(e)).toList();
+    return surahList.reversed.toList();
   }
 
-  Future playAudio(String url) async {
-    await player.setUrl(url);
-    await player.play();
+  void playAudio(int index) async {
+    if (await internetCheck()) {
+      await player.setUrl('${EndPoint.audio}/${convertIndexString(index)}.mp3');
+      await player.play();
+    } else {
+      snackbarMessage(
+        'No Internet Connection',
+        'Hubungkan dengan Akses Internet',
+      );
+    }
     isPlayAudio.value = false;
   }
 
-  Future stopAudio() async {
+  void stopAudio() async {
     await player.stop();
+  }
+
+  set tabIndex(int value) {
+    tabController.animateTo(value);
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    tabController = TabController(length: 114, vsync: this);
+    tabIndex = 114 - numberOfSurah;
+    currentIndexTab.value = numberOfSurah;
+  }
+
+  @override
+  void onClose() async {
+    stopAudio();
+    super.onClose();
   }
 }
