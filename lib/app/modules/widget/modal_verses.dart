@@ -12,6 +12,7 @@ class ModalVerses extends DetailSurahController {
     DetailSurah surah,
     Ayat ayat,
     int indexAyat,
+    bool checkBookmark,
   ) {
     final SizeConfig sizeConfig = SizeConfig(context);
     return showModalBottomSheet(
@@ -53,13 +54,18 @@ class ModalVerses extends DetailSurahController {
                 action: () {
                   addBookmark(true, surah, ayat, indexAyat);
                 },
+                disable: false,
               ),
               TileFeature(
                 icon: Icons.bookmark_add,
-                title: 'Simpan Ke Bookmark',
-                action: () {
-                  addBookmark(false, surah, ayat, indexAyat);
-                },
+                title:
+                    checkBookmark ? "Sudah Terbookmark" : 'Simpan Ke Bookmark',
+                action: checkBookmark
+                    ? () {}
+                    : () {
+                        addBookmark(false, surah, ayat, indexAyat);
+                      },
+                disable: checkBookmark,
               ),
             ],
           ),
@@ -71,9 +77,14 @@ class ModalVerses extends DetailSurahController {
 
 class TileFeature extends StatelessWidget {
   const TileFeature(
-      {super.key, required this.title, required this.icon, this.action});
+      {super.key,
+      required this.title,
+      required this.icon,
+      this.action,
+      this.disable});
   final String title;
   final IconData icon;
+  final bool? disable;
   final Function()? action;
 
   @override
@@ -86,13 +97,14 @@ class TileFeature extends StatelessWidget {
           ListTile(
             leading: Icon(
               icon,
-              color: appBlueLight1,
+              color: disable == true ? appGrey : appBlueLight1,
               size: sizeConfig.getProportionateScreenWidth(30),
             ),
             title: Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
+                color: disable == true ? appGrey : appBlack,
               ),
             ),
           ),

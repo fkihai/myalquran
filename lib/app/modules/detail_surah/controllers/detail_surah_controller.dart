@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
@@ -21,6 +22,9 @@ class DetailSurahController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final player = AudioPlayer();
   late TabController tabController;
+
+  DatabaseManager databaseManager = DatabaseManager.instance;
+
   DatabaseManager database = DatabaseManager.instance;
   AutoScrollController autoScrollController = AutoScrollController();
 
@@ -90,6 +94,23 @@ class DetailSurahController extends GetxController
     }
     List<Surah> surahList = data.map((e) => Surah.fromJson(e)).toList();
     return surahList.reversed.toList();
+  }
+
+  Future<bool> checkBookmark({
+    required int numberOfSurah,
+    required int numberOfVerses,
+  }) async {
+    Database db = await databaseManager.db;
+    List<Map<String, dynamic>> dataQuery = await db.rawQuery(
+      'SELECT * FROM bookmark WHERE numberOfSurah=? and numberOfVerses=? and lastRead = 0',
+      [numberOfSurah, numberOfVerses],
+    );
+
+    if (dataQuery.isNotEmpty) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   void playAudio(int index) async {

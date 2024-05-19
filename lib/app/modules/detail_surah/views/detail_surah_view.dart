@@ -5,7 +5,7 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 
 import '../../../constant/size_config.dart';
 import '../../../data/model/surah.dart';
-import '../../widget/ayat.dart';
+import '../../widget/verses_view.dart';
 import '../../widget/basmalah.dart';
 import '../../widget/surah_title.dart';
 import '../controllers/detail_surah_controller.dart';

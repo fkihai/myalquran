@@ -1,6 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:myalquran/app/constant/color.dart';
 import 'package:myalquran/app/modules/widget/modal_verses.dart';
 import 'package:quran/quran.dart' as quran;
@@ -36,9 +37,22 @@ class VersesView extends GetView<DetailSurahController> {
             children: [
               IconButton(
                 color: appBlack,
-                onPressed: () {
+                onPressed: () async {
+                  final bool checkBookmark = await controller.checkBookmark(
+                    numberOfSurah: detailSurah.nomor!.toInt(),
+                    numberOfVerses: ayat.nomor!.toInt(),
+                  );
+
+                  log("bokmark: $checkBookmark");
+
                   ModalVerses modalVerses = ModalVerses();
-                  modalVerses.show(context, detailSurah, ayat, index);
+                  modalVerses.show(
+                    context,
+                    detailSurah,
+                    ayat,
+                    index,
+                    checkBookmark,
+                  );
                 },
                 icon: const Icon(Icons.more_vert),
               ),
@@ -70,9 +84,10 @@ class VersesView extends GetView<DetailSurahController> {
                                     text: quran.getVerseEndSymbol(
                                       ayat.nomor!.toInt(),
                                     ),
-                                    style: GoogleFonts.lateef(
+                                    style: const TextStyle(
+                                      fontFamily: 'Lpmq',
                                       color: appBlueLight1,
-                                      fontSize: 25,
+                                      fontSize: 27,
                                       fontWeight: FontWeight.bold,
                                       wordSpacing: 1.0,
                                       height: 2.3,
