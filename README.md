@@ -1,6 +1,6 @@
 # myalquran
 
-Versi : 3.19
+Flutter Version : 3.19.5
 
 ## Getting Started
 
