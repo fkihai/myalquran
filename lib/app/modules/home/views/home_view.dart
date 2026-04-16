@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 import 'package:myalquran/app/routes/app_pages.dart';
 
-import '../../../constant/color.dart';
-import '../../../constant/size_config.dart';
+import '../../../../core/constant/color.dart';
+import '../../../../core/constant/size_config.dart';
 import '../../widget/search_field.dart';
 import '../controllers/home_controller.dart';
 import '../layout/bookmark_layout.dart';

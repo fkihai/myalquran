@@ -24,13 +24,13 @@ class DatabaseManager {
       version: 1,
       onCreate: (database, version) async {
         return await database.execute('''
-            CREATE TABLE bookmark(
+            CREATE TABLE surah_progress(
               id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-              nameOfSurah TEXT NOT NULL,
-              numberOfSurah INTEGER NOT NULL,
-              numberOfVerses INTEGER NOT NULL,
-              indexVersesOnSurah INTEGER NOT NULL,
-              lastRead INTEGER DEFAULT 0
+              surah_name TEXT NOT NULL,
+              surah_number INTEGER NOT NULL,
+              number_of_verses INTEGER NOT NULL,
+              verse_index_in_surah INTEGER NOT NULL,
+              last_read INTEGER DEFAULT 0
             )
           ''');
       },

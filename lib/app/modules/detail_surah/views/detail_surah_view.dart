@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:myalquran/app/constant/color.dart';
+import 'package:myalquran/core/constant/color.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
-import '../../../constant/size_config.dart';
+import '../../../../core/constant/size_config.dart';
 import '../../../data/model/surah.dart';
-import '../../widget/verses_view.dart';
 import '../../widget/basmalah.dart';
 import '../../widget/surah_title.dart';
+import '../../widget/verses_view.dart';
 import '../controllers/detail_surah_controller.dart';
 
 class DetailSurahView extends GetView<DetailSurahController> {
@@ -66,7 +66,7 @@ class DetailSurahView extends GetView<DetailSurahController> {
                                     sizeConfig.getProportionateScreenHeight(30),
                                 child: Center(
                                   child: Text(
-                                    '${tab.namaLatin}',
+                                    '${tab.latinName}',
                                   ),
                                 ),
                               ),
@@ -177,7 +177,7 @@ class DetailSurahView extends GetView<DetailSurahController> {
                                 ),
                               ),
                               Text(
-                                '${listSurah[114 - controller.currentIndexTab.value].namaLatin}',
+                                '${listSurah[114 - controller.currentIndexTab.value].latinName}',
                                 style: const TextStyle(
                                   fontSize: 17,
                                   fontWeight: FontWeight.bold,

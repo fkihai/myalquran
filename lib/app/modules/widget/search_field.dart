@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../constant/color.dart';
-import '../../constant/size_config.dart';
+import '../../../core/constant/color.dart';
+import '../../../core/constant/size_config.dart';
 import '../home/controllers/home_controller.dart';
 
 class SearchField extends GetView<HomeController> {
@@ -38,7 +38,7 @@ class SearchField extends GetView<HomeController> {
                   },
                   cursorColor: appBlueLight2,
                   decoration: const InputDecoration(
-                    hintText: "Search surah...",
+                    hintText: "Search surah",
                     hintStyle: TextStyle(
                       fontSize: 15,
                       color: appGrey,

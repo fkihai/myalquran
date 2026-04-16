@@ -36,7 +36,7 @@ class HomeController extends GetxController {
     } else {
       result = allSurah
           .where(
-            (element) => element.namaLatin.toString().toLowerCase().contains(
+            (element) => element.latinName.toString().toLowerCase().contains(
                   surahName.toLowerCase(),
                 ),
           )

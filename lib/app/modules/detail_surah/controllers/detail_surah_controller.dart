@@ -1,29 +1,25 @@
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:myalquran/app/data/remote/end_point.dart';
-import 'package:myalquran/app/modules/home/controllers/home_controller.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
-import 'package:get/get.dart';
-import 'package:flutter/services.dart';
-
 import 'package:sqflite/sqflite.dart';
+
+import '../../../../core/utils/convert_string_index.dart';
+import '../../../../core/utils/internet_check.dart';
+import '../../../../core/utils/snackbar_message.dart';
 import '../../../data/db/bookmark.dart';
 import '../../../data/model/detail_surah.dart';
 import '../../../data/model/surah.dart';
-import '../../utils/convert_string_index.dart';
-import '../../utils/internet_check.dart';
-import '../../utils/snackbar_message.dart';
+import '../../home/controllers/home_controller.dart';
 
 class DetailSurahController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final player = AudioPlayer();
   late TabController tabController;
-
-  DatabaseManager databaseManager = DatabaseManager.instance;
 
   DatabaseManager database = DatabaseManager.instance;
   AutoScrollController autoScrollController = AutoScrollController();
@@ -100,7 +96,7 @@ class DetailSurahController extends GetxController
     required int numberOfSurah,
     required int numberOfVerses,
   }) async {
-    Database db = await databaseManager.db;
+    Database db = await database.db;
     List<Map<String, dynamic>> dataQuery = await db.rawQuery(
       'SELECT * FROM bookmark WHERE numberOfSurah=? and numberOfVerses=? and lastRead = 0',
       [numberOfSurah, numberOfVerses],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../constant/color.dart';
-import '../../constant/size_config.dart';
+import '../../../core/constant/color.dart';
+import '../../../core/constant/size_config.dart';
 
 class BasmalahVerses extends StatelessWidget {
   const BasmalahVerses({super.key, required this.nomor});

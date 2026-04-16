@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../constant/color.dart';
-import '../../constant/size_config.dart';
+import '../../../core/constant/color.dart';
+import '../../../core/constant/size_config.dart';
 import '../../data/model/detail_surah.dart';
 import '../detail_surah/controllers/detail_surah_controller.dart';
 

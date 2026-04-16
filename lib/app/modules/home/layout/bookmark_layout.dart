@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../constant/size_config.dart';
+import '../../../../core/constant/size_config.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/home_controller.dart';
 

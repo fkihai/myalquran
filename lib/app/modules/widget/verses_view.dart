@@ -2,12 +2,12 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:myalquran/app/constant/color.dart';
 import 'package:myalquran/app/modules/widget/modal_verses.dart';
+import 'package:myalquran/core/constant/color.dart';
 import 'package:quran/quran.dart' as quran;
 
 // import '../../constant/color.dart';
-import '../../constant/size_config.dart';
+import '../../../core/constant/size_config.dart';
 import '../../data/model/detail_surah.dart';
 import '../detail_surah/controllers/detail_surah_controller.dart';
 

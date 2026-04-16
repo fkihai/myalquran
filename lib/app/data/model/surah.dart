@@ -1,43 +1,43 @@
 class Surah {
   int? nomor;
-  String? nama;
-  String? namaLatin;
-  int? jumlahAyat;
-  String? tempatTurun;
-  String? arti;
-  String? deskripsi;
+  String? name;
+  String? latinName;
+  int? numberOfVerses;
+  String? revalationPlace;
+  String? meaning;
+  String? description;
   String? audio;
 
   Surah(
       {this.nomor,
-      this.nama,
-      this.namaLatin,
-      this.jumlahAyat,
-      this.tempatTurun,
-      this.arti,
-      this.deskripsi,
+      this.name,
+      this.latinName,
+      this.numberOfVerses,
+      this.revalationPlace,
+      this.meaning,
+      this.description,
       this.audio});
 
   Surah.fromJson(Map<String, dynamic> json) {
     nomor = json['nomor'];
-    nama = json['nama'];
-    namaLatin = json['nama_latin'];
-    jumlahAyat = json['jumlah_ayat'];
-    tempatTurun = json['tempat_turun'];
-    arti = json['arti'];
-    deskripsi = json['deskripsi'];
+    name = json['nama'];
+    latinName = json['nama_latin'];
+    numberOfVerses = json['jumlah_ayat'];
+    revalationPlace = json['tempat_turun'];
+    meaning = json['arti'];
+    description = json['deskripsi'];
     audio = json['audio'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['nomor'] = nomor;
-    data['nama'] = nama;
-    data['nama_latin'] = namaLatin;
-    data['jumlah_ayat'] = jumlahAyat;
-    data['tempat_turun'] = tempatTurun;
-    data['arti'] = arti;
-    data['deskripsi'] = deskripsi;
+    data['nama'] = name;
+    data['nama_latin'] = latinName;
+    data['jumlah_ayat'] = numberOfVerses;
+    data['tempat_turun'] = revalationPlace;
+    data['arti'] = meaning;
+    data['deskripsi'] = description;
     data['audio'] = audio;
     return data;
   }

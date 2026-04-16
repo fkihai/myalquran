@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'package:quran/quran.dart' as quran;
 
-import '../../../constant/color.dart';
+import '../../../../core/constant/color.dart';
 import '../../../data/model/surah.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/home_controller.dart';
@@ -49,7 +48,7 @@ class SurahLayout extends GetView<HomeController> {
                     ),
                   ),
                   title: Text(
-                    '${surah.namaLatin}',
+                    '${surah.latinName}',
                     style: const TextStyle(
                       color: appBlueLight1,
                       fontWeight: FontWeight.bold,
@@ -59,7 +58,7 @@ class SurahLayout extends GetView<HomeController> {
                   subtitle: Padding(
                     padding: const EdgeInsets.only(top: 5),
                     child: Text(
-                      '${surah.jumlahAyat} ayat | ${surah.tempatTurun}',
+                      '${surah.numberOfVerses} ayat | ${surah.revalationPlace}',
                       style: const TextStyle(
                         color: appGrey,
                         fontSize: 14,
@@ -67,7 +66,7 @@ class SurahLayout extends GetView<HomeController> {
                     ),
                   ),
                   trailing: Text(
-                    '${surah.nama}',
+                    '${surah.name}',
                     style: const TextStyle(
                       fontFamily: 'Lpmq',
                       color: appBlueLight1,
