@@ -4,8 +4,8 @@ import 'package:myalquran/domain/entities/verses.dart';
 class Surah extends Equatable {
   final int nomor;
   final String name;
-  final String latinName;
-  final int numberOfVerses;
+  final String nameLatin;
+  final int totalVerses;
   final String revalationPlace;
   final String meaning;
   final String description;
@@ -14,8 +14,8 @@ class Surah extends Equatable {
     required this.verses,
     required this.nomor,
     required this.name,
-    required this.latinName,
-    required this.numberOfVerses,
+    required this.nameLatin,
+    required this.totalVerses,
     required this.revalationPlace,
     required this.meaning,
     required this.description,

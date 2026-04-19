@@ -26,10 +26,9 @@ class DatabaseManager {
         return await database.execute('''
             CREATE TABLE surah_progress(
               id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-              surah_name TEXT NOT NULL,
+              surah_name_latin TEXT NOT NULL,
               surah_number INTEGER NOT NULL,
-              number_of_verses INTEGER NOT NULL,
-              verse_index_in_surah INTEGER NOT NULL,
+              verse_index INTEGER NOT NULL,
               last_read INTEGER DEFAULT 0
             )
           ''');

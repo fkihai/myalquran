@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 
-abstract class HomeEvent extends Equatable {}
+abstract class SurahListEvent extends Equatable {}
 
-class FetchSurahEvent extends HomeEvent {
+class FetchSurahEvent extends SurahListEvent {
   FetchSurahEvent();
 
   @override

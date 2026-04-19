@@ -13,7 +13,8 @@ void main() {
     MultiRepositoryProvider(
       providers: [
         RepositoryProvider<DatabaseManager>(
-            create: (_) => DatabaseManager.instance),
+          create: (_) => DatabaseManager.instance,
+        ),
         RepositoryProvider<LocalDatasource>(
           create: (ctx) => LocalDatasource(ctx.read<DatabaseManager>()),
         ),

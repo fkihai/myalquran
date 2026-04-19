@@ -1,29 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:myalquran/features/home/bloc/home_bloc.dart';
-import 'package:myalquran/features/home/bloc/home_event.dart';
-import 'package:myalquran/features/home/bloc/home_state.dart';
-import 'package:myalquran/features/home/widgets/bookmark.dart';
+import 'package:myalquran/features/home/bloc/bookmark/bookmark_bloc.dart';
+import 'package:myalquran/features/home/bloc/bookmark/bookmark_state.dart';
+import 'package:myalquran/features/home/bloc/surah_list/surah_list_bloc.dart';
+import 'package:myalquran/features/home/bloc/surah_list/surah_list_state.dart';
 import 'package:myalquran/features/home/widgets/surah.dart';
 import 'package:myalquran/shared/widgets/text_custom.dart';
 
 import '../../../app/modules/widget/search_field.dart';
 import '../../../core/constant/color.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    context.read<HomeBloc>().add(FetchSurahEvent());
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,22 +75,34 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 Expanded(
-                  child: BlocBuilder<HomeBloc, HomeState>(
-                    builder: (context, state) {
-                      return TabBarView(
-                        children: [
-                          if (state is QuranLoading)
-                            const Center(child: CircularProgressIndicator())
-                          else if (state is QuranLoaded)
-                            SurahWidget(surahList: state.allSurah)
-                          else if (state is QuranError)
-                            Center(child: TextCustom(state.message))
-                          else
-                            const SizedBox(),
-                          const BookMark(),
-                        ],
-                      );
-                    },
+                  child: TabBarView(
+                    children: [
+                      BlocBuilder<SurahListBloc, SurahListState>(
+                        builder: (context, state) {
+                          if (state is SurahListLoading) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          } else if (state is SurahListLoaded) {
+                            return SurahWidget(surahList: state.allSurah);
+                          } else if (state is SurahListError) {
+                            return Center(child: TextCustom(state.message));
+                          } else {
+                            return const SizedBox();
+                          }
+                        },
+                      ),
+                      BlocBuilder<BookmarkBloc, BookmarkState>(
+                          builder: (context, state) {
+                        if (state is BookmarkLoading) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (state is BookmarkLoaded) {
+                          return const SizedBox();
+                        } else {
+                          return const SizedBox();
+                        }
+                      })
+                    ],
                   ),
                 ),
               ],

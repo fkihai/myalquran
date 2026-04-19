@@ -4,8 +4,8 @@ import 'verses_model.dart';
 class SurahModel {
   int? nomor;
   String? name;
-  String? latinName;
-  int? numberOfVerses;
+  String? nameLatin;
+  int? totalVerses;
   String? revalationPlace;
   String? meaning;
   String? description;
@@ -16,8 +16,8 @@ class SurahModel {
   SurahModel({
     this.nomor,
     this.name,
-    this.latinName,
-    this.numberOfVerses,
+    this.nameLatin,
+    this.totalVerses,
     this.revalationPlace,
     this.meaning,
     this.description,
@@ -29,8 +29,8 @@ class SurahModel {
   SurahModel.fromJson(Map<String, dynamic> json) {
     nomor = json['nomor'];
     name = json['nama'];
-    latinName = json['nama_latin'];
-    numberOfVerses = json['jumlah_ayat'];
+    nameLatin = json['nama_latin'];
+    totalVerses = json['jumlah_ayat'];
     revalationPlace = json['tempat_turun'];
     meaning = json['arti'];
     description = json['deskripsi'];
@@ -48,8 +48,8 @@ class SurahModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['nomor'] = nomor;
     data['nama'] = name;
-    data['nama_latin'] = latinName;
-    data['jumlah_ayat'] = numberOfVerses;
+    data['nama_latin'] = nameLatin;
+    data['jumlah_ayat'] = totalVerses;
     data['tempat_turun'] = revalationPlace;
     data['arti'] = meaning;
     data['deskripsi'] = description;
@@ -65,8 +65,8 @@ class SurahModel {
     return Surah(
       nomor: nomor ?? 0,
       name: name ?? "",
-      latinName: latinName ?? "",
-      numberOfVerses: numberOfVerses ?? 0,
+      nameLatin: nameLatin ?? "",
+      totalVerses: totalVerses ?? 0,
       revalationPlace: revalationPlace ?? "",
       meaning: meaning ?? "",
       description: description ?? "",

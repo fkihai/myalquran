@@ -25,7 +25,7 @@ class SurahWidget extends StatelessWidget {
               ),
             ),
             title: Text(
-              surah.latinName,
+              surah.nameLatin,
               style: const TextStyle(
                 color: appBlueLight1,
                 fontWeight: FontWeight.bold,
@@ -35,7 +35,7 @@ class SurahWidget extends StatelessWidget {
             subtitle: Padding(
               padding: EdgeInsets.only(top: 5.h),
               child: Text(
-                '${surah.numberOfVerses} ayat | ${surah.revalationPlace}',
+                '${surah.totalVerses} ayat | ${surah.revalationPlace}',
                 style: const TextStyle(
                   color: appGrey,
                   fontSize: 14,
