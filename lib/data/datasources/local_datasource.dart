@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:myalquran/app/data/db/bookmark.dart';
+import 'package:myalquran/data/datasources/database_manager.dart';
 import 'package:myalquran/data/models/surah_model.dart';
 import 'package:sqflite/sqflite.dart';
 

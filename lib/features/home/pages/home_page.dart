@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:myalquran/core/constant/color.dart';
 import 'package:myalquran/features/home/bloc/bookmark/bookmark_bloc.dart';
 import 'package:myalquran/features/home/bloc/bookmark/bookmark_state.dart';
 import 'package:myalquran/features/home/bloc/surah_list/surah_list_bloc.dart';
+import 'package:myalquran/features/home/bloc/surah_list/surah_list_event.dart';
 import 'package:myalquran/features/home/bloc/surah_list/surah_list_state.dart';
-import 'package:myalquran/features/home/widgets/surah.dart';
+import 'package:myalquran/features/home/widgets/list_surah.dart';
+import 'package:myalquran/features/home/widgets/search_field.dart';
 import 'package:myalquran/shared/widgets/text_custom.dart';
-
-import '../../../app/modules/widget/search_field.dart';
-import '../../../core/constant/color.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -51,7 +51,9 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 10.h),
-                const SearchField(),
+                SearchField(onChange: (value) {
+                  context.read<SurahListBloc>().add(FilterSurahEvent(value));
+                }),
                 SizedBox(height: 10.h),
                 TabBar.secondary(
                   indicatorColor: appBlueLight1,
@@ -83,7 +85,7 @@ class HomePage extends StatelessWidget {
                             return const Center(
                                 child: CircularProgressIndicator());
                           } else if (state is SurahListLoaded) {
-                            return SurahWidget(surahList: state.allSurah);
+                            return ListSurahWidget(surahList: state.allSurah);
                           } else if (state is SurahListError) {
                             return Center(child: TextCustom(state.message));
                           } else {

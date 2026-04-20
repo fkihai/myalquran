@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:myalquran/app/data/db/bookmark.dart';
 import 'package:myalquran/core/constant/color.dart';
 import 'package:myalquran/core/routes/app_router.dart';
+import 'package:myalquran/data/datasources/database_manager.dart';
 import 'package:myalquran/data/datasources/local_datasource.dart';
 import 'package:myalquran/data/repositories/quran_repository_impl.dart';
 import 'package:myalquran/domain/repository/quran_repository.dart';

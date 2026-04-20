@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:myalquran/core/routes/route_names.dart';
 import 'package:myalquran/domain/entities/surah.dart';
 import 'package:quran/quran.dart' as quran;
 
 import '../../../core/constant/color.dart';
 
-class SurahWidget extends StatelessWidget {
+class ListSurahWidget extends StatelessWidget {
   final List<Surah> surahList;
-  const SurahWidget({super.key, required this.surahList});
+  const ListSurahWidget({super.key, required this.surahList});
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +19,11 @@ class SurahWidget extends StatelessWidget {
           final surah = surahList[index];
 
           return ListTile(
+            onTap: () {
+              context.push(Routes.toDetailSurah(surah.nomor.toString()));
+            },
             leading: Text(
-              quran.getVerseEndSymbol(index + 1),
+              quran.getVerseEndSymbol(surah.nomor),
               style: const TextStyle(
                 color: appBlueLight1,
                 fontSize: 27,
