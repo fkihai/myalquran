@@ -7,101 +7,153 @@ import 'package:myalquran/features/surah/bloc/surah_state.dart';
 import 'package:myalquran/features/surah/bloc/surah_event.dart';
 import 'package:myalquran/shared/widgets/text_custom.dart';
 import 'package:quran/quran.dart' as quran;
+import 'package:scroll_to_index/scroll_to_index.dart';
 
-class SurahPage extends StatelessWidget {
-  const SurahPage({super.key});
+class SurahPage extends StatefulWidget {
+  final int? verseIndex;
+  const SurahPage({super.key, this.verseIndex});
+
+  @override
+  State<SurahPage> createState() => _SurahPageState();
+}
+
+class _SurahPageState extends State<SurahPage> {
+  late AutoScrollController autoScrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    autoScrollController = AutoScrollController(
+      viewportBoundaryGetter: () =>
+          Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
+      axis: Axis.vertical,
+    );
+  }
+
+  @override
+  void dispose() {
+    autoScrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SurahBloc, SurahState>(
-      builder: (context, state) {
-        if (state.isLoading && state.allSurah.isEmpty) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
+    return BlocListener<SurahBloc, SurahState>(
+      listener: (context, state) {
+        if (widget.verseIndex != null &&
+            state.detailSurah != null &&
+            !state.isLoading) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            autoScrollController.scrollToIndex(
+              widget.verseIndex!,
+              preferPosition: AutoScrollPosition.begin,
+            );
+          });
         }
+      },
+      child: BlocBuilder<SurahBloc, SurahState>(
+        builder: (context, state) {
+          // Initial Loading (Tabs not yet loaded)
+          if (state.isLoading && state.allSurah.isEmpty) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
 
-        if (state.errorMessage != null && state.allSurah.isEmpty) {
-          return Scaffold(
-            body: Center(child: TextCustom(state.errorMessage!)),
-          );
-        }
+          // Global Error (Failed to load Tabs)
+          if (state.errorMessage != null && state.allSurah.isEmpty) {
+            return Scaffold(
+              body: Center(child: TextCustom(state.errorMessage!)),
+            );
+          }
 
-        final initialIndex = state.detailSurah != null
-            ? state.allSurah
-                .indexWhere((s) => s.nomor == state.detailSurah!.nomor)
-            : 0;
+          final initialIndex = state.detailSurah != null
+              ? state.allSurah
+                  .indexWhere((s) => s.nomor == state.detailSurah!.nomor)
+              : 0;
 
-        return DefaultTabController(
-          length: state.allSurah.length,
-          initialIndex: initialIndex != -1 ? initialIndex : 0,
-          child: Scaffold(
-            appBar: AppBar(
-              title: Image.asset(width: 130.w, 'assets/img/logo-appbar.png'),
-              centerTitle: true,
-            ),
-            body: Column(
-              children: [
-                Container(
-                  color: Colors.white,
-                  child: TabBar.secondary(
-                    isScrollable: true,
-                    onTap: (index) {
-                      final surahNumber = state.allSurah[index].nomor;
-                      context
-                          .read<SurahBloc>()
-                          .add(LoadSurahEvent(surahNumber: surahNumber));
-                    },
-                    tabs: state.allSurah
-                        .map((s) => Tab(
-                              child: SizedBox(
-                                height: 30.h,
-                                child: Center(
-                                  child: TextCustom(
-                                    s.nameLatin,
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w600,
+          return DefaultTabController(
+            length: state.allSurah.length,
+            initialIndex: initialIndex != -1 ? initialIndex : 0,
+            child: Scaffold(
+              appBar: AppBar(
+                title: Image.asset(width: 130.w, 'assets/img/logo-appbar.png'),
+                centerTitle: true,
+              ),
+              body: Column(
+                children: [
+                  Container(
+                    color: Colors.white,
+                    child: TabBar.secondary(
+                      isScrollable: true,
+                      onTap: (index) {
+                        // Fetch detail for the selected Surah
+                        final surahNumber = state.allSurah[index].nomor;
+                        context
+                            .read<SurahBloc>()
+                            .add(LoadSurahEvent(surahNumber: surahNumber));
+                      },
+                      tabs: state.allSurah
+                          .map((s) => Tab(
+                                child: SizedBox(
+                                  height: 30.h,
+                                  child: Center(
+                                    child: TextCustom(
+                                      s.nameLatin,
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ))
-                        .toList(),
+                              ))
+                          .toList(),
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: TabBarView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: state.allSurah.map((surah) {
-                      if (state.detailSurah != null &&
-                          state.detailSurah!.nomor == surah.nomor) {
-                        return ListView.builder(
-                          itemCount: state.detailSurah!.verses.length,
-                          itemBuilder: (context, index) {
-                            final verse = state.detailSurah!.verses[index];
-                            return Column(
-                              children: [
-                                if (index == 0) ...[
-                                  _buildSurahTitle(surah),
-                                  _buildBasmalah(surah.nomor),
-                                ],
-                                _buildVerseItem(verse),
-                              ],
-                            );
-                          },
-                        );
-                      }
+                  Expanded(
+                    child: TabBarView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: state.allSurah.map((surah) {
+                        // If this is the active tab and data matches the detailSurah
+                        if (state.detailSurah != null &&
+                            state.detailSurah!.nomor == surah.nomor) {
+                          return ListView.builder(
+                            controller: autoScrollController,
+                            itemCount: state.detailSurah!.verses.length,
+                            itemBuilder: (context, index) {
+                              final verse = state.detailSurah!.verses[index];
+                              return AutoScrollTag(
+                                key: ValueKey(index),
+                                controller: autoScrollController,
+                                index: index,
+                                child: Column(
+                                  children: [
+                                    // Surah Title and Basmalah at the start of the list
+                                    if (index == 0) ...[
+                                      _buildSurahTitle(surah),
+                                      _buildBasmalah(surah.nomor),
+                                    ],
+                                    _buildVerseItem(verse),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        }
 
-                      return const Center(
-                        child: CircularProgressIndicator(color: appBlueLight1),
-                      );
-                    }).toList(),
+                        // Show loading spinner for specific tab content
+                        return const Center(
+                          child:
+                              CircularProgressIndicator(color: appBlueLight1),
+                        );
+                      }).toList(),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 

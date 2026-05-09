@@ -60,6 +60,8 @@ final GoRouter router = GoRouter(
       builder: (context, state) {
         final int? nomorSurah =
             int.tryParse(state.pathParameters['nomor'] ?? "");
+        final int? verseIndex =
+            int.tryParse(state.uri.queryParameters['verseIndex'] ?? "");
 
         if (nomorSurah == null || nomorSurah == 0) {
           return const NotFoundPage();
@@ -79,7 +81,7 @@ final GoRouter router = GoRouter(
               getAllSurah: getAllSurah,
             )..add(LoadSurahEvent(surahNumber: nomorSurah));
           },
-          child: const SurahPage(),
+          child: SurahPage(verseIndex: verseIndex),
         );
       },
     )
