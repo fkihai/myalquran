@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:myalquran/core/constant/color.dart';
+import 'package:myalquran/domain/entities/verses.dart';
 import 'package:myalquran/features/surah/bloc/surah_bloc.dart';
 import 'package:myalquran/features/surah/bloc/surah_state.dart';
 import 'package:myalquran/features/surah/bloc/surah_event.dart';
+import 'package:myalquran/features/surah/widgets/modal_verses.dart';
 import 'package:myalquran/shared/widgets/text_custom.dart';
 import 'package:quran/quran.dart' as quran;
 import 'package:scroll_to_index/scroll_to_index.dart';
+
+import '../../../domain/entities/surah.dart';
+import '../../../domain/entities/surah_progress.dart';
 
 class SurahPage extends StatefulWidget {
   final int? verseIndex;
@@ -17,8 +22,9 @@ class SurahPage extends StatefulWidget {
   State<SurahPage> createState() => _SurahPageState();
 }
 
-class _SurahPageState extends State<SurahPage> {
+class _SurahPageState extends State<SurahPage> with TickerProviderStateMixin {
   late AutoScrollController autoScrollController;
+  TabController? tabController;
 
   @override
   void initState() {
@@ -32,6 +38,7 @@ class _SurahPageState extends State<SurahPage> {
 
   @override
   void dispose() {
+    tabController?.dispose();
     autoScrollController.dispose();
     super.dispose();
   }
@@ -50,17 +57,23 @@ class _SurahPageState extends State<SurahPage> {
             );
           });
         }
+
+        if (state.detailSurah != null && tabController != null) {
+          final targetIndex = state.allSurah
+              .indexWhere((s) => s.nomor == state.detailSurah!.nomor);
+          if (targetIndex != -1 && tabController!.index != targetIndex) {
+            tabController!.animateTo(targetIndex);
+          }
+        }
       },
       child: BlocBuilder<SurahBloc, SurahState>(
         builder: (context, state) {
-          // Initial Loading (Tabs not yet loaded)
           if (state.isLoading && state.allSurah.isEmpty) {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
           }
 
-          // Global Error (Failed to load Tabs)
           if (state.errorMessage != null && state.allSurah.isEmpty) {
             return Scaffold(
               body: Center(child: TextCustom(state.errorMessage!)),
@@ -72,84 +85,93 @@ class _SurahPageState extends State<SurahPage> {
                   .indexWhere((s) => s.nomor == state.detailSurah!.nomor)
               : 0;
 
-          return DefaultTabController(
-            length: state.allSurah.length,
-            initialIndex: initialIndex != -1 ? initialIndex : 0,
-            child: Scaffold(
-              appBar: AppBar(
-                title: Image.asset(width: 130.w, 'assets/img/logo-appbar.png'),
-                centerTitle: true,
-              ),
-              body: Column(
-                children: [
-                  Container(
-                    color: Colors.white,
-                    child: TabBar.secondary(
-                      isScrollable: true,
-                      onTap: (index) {
-                        // Fetch detail for the selected Surah
-                        final surahNumber = state.allSurah[index].nomor;
-                        context
-                            .read<SurahBloc>()
-                            .add(LoadSurahEvent(surahNumber: surahNumber));
-                      },
-                      tabs: state.allSurah
-                          .map((s) => Tab(
-                                child: SizedBox(
-                                  height: 30.h,
-                                  child: Center(
-                                    child: TextCustom(
-                                      s.nameLatin,
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+          // Ensure tabController is initialized if it's null or length changed
+          if (tabController == null ||
+              tabController!.length != state.allSurah.length) {
+            tabController = TabController(
+              length: state.allSurah.length,
+              vsync: this,
+              initialIndex: initialIndex != -1 ? initialIndex : 0,
+            );
+          }
+
+          return Scaffold(
+            appBar: AppBar(
+              title: Image.asset(width: 130.w, 'assets/img/logo-appbar.png'),
+              centerTitle: true,
+            ),
+            body: Column(
+              children: [
+                Container(
+                  color: Colors.white,
+                  child: TabBar.secondary(
+                    isScrollable: true,
+                    controller: tabController,
+                    onTap: (index) {
+                      // Fetch detail for the selected Surah
+                      final surahNumber = state.allSurah[index].nomor;
+                      context
+                          .read<SurahBloc>()
+                          .add(LoadSurahEvent(surahNumber: surahNumber));
+                    },
+                    tabs: state.allSurah
+                        .map((s) => Tab(
+                              child: SizedBox(
+                                height: 30.h,
+                                child: Center(
+                                  child: TextCustom(
+                                    s.nameLatin,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                              ))
-                          .toList(),
-                    ),
+                              ),
+                            ))
+                        .toList(),
                   ),
-                  Expanded(
-                    child: TabBarView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: state.allSurah.map((surah) {
-                        // If this is the active tab and data matches the detailSurah
-                        if (state.detailSurah != null &&
-                            state.detailSurah!.nomor == surah.nomor) {
-                          return ListView.builder(
-                            controller: autoScrollController,
-                            itemCount: state.detailSurah!.verses.length,
-                            itemBuilder: (context, index) {
-                              final verse = state.detailSurah!.verses[index];
-                              return AutoScrollTag(
-                                key: ValueKey(index),
-                                controller: autoScrollController,
-                                index: index,
-                                child: Column(
-                                  children: [
-                                    // Surah Title and Basmalah at the start of the list
-                                    if (index == 0) ...[
-                                      _buildSurahTitle(surah),
-                                      _buildBasmalah(surah.nomor),
-                                    ],
-                                    _buildVerseItem(verse),
+                ),
+                Expanded(
+                  child: TabBarView(
+                    controller: tabController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: state.allSurah.map((surah) {
+                      // If this is the active tab and data matches the detailSurah
+                      if (state.detailSurah != null &&
+                          state.detailSurah!.nomor == surah.nomor) {
+                        return ListView.builder(
+                          controller: autoScrollController,
+                          itemCount: state.detailSurah!.verses.length,
+                          itemBuilder: (context, index) {
+                            final verse = state.detailSurah!.verses[index];
+                            return AutoScrollTag(
+                              key: ValueKey(index),
+                              controller: autoScrollController,
+                              index: index,
+                              child: Column(
+                                children: [
+                                  // Surah Title and Basmalah at the start of the list
+                                  if (index == 0) ...[
+                                    _buildSurahTitle(surah),
+                                    _buildBasmalah(surah.nomor),
                                   ],
-                                ),
-                              );
-                            },
-                          );
-                        }
-
-                        // Show loading spinner for specific tab content
-                        return const Center(
-                          child:
-                              CircularProgressIndicator(color: appBlueLight1),
+                                  _buildVerseItem(
+                                      verse, surah.nameLatin, state),
+                                ],
+                              ),
+                            );
+                          },
                         );
-                      }).toList(),
-                    ),
+                      }
+
+                      // Show loading spinner for specific tab content
+                      return const Center(
+                        child: CircularProgressIndicator(color: appBlueLight1),
+                      );
+                    }).toList(),
                   ),
-                ],
-              ),
+                ),
+                if (state.detailSurah != null) _bottomBar(state.detailSurah!)
+              ],
             ),
           );
         },
@@ -157,7 +179,7 @@ class _SurahPageState extends State<SurahPage> {
     );
   }
 
-  Widget _buildSurahTitle(dynamic surah) {
+  Widget _buildSurahTitle(Surah surah) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       child: ListTile(
@@ -176,7 +198,7 @@ class _SurahPageState extends State<SurahPage> {
         ),
         trailing: TextCustom(
           surah.name,
-          // fontFamily: 'Lpmq',
+          fontFamily: 'Lpmq',
           fontSize: 30.sp,
           color: appWhite,
         ),
@@ -192,7 +214,7 @@ class _SurahPageState extends State<SurahPage> {
             padding: EdgeInsets.only(top: 10.h, bottom: 20.h),
             child: TextCustom(
               'بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ',
-              // fontFamily: 'Lpmq',
+              fontFamily: 'Lpmq',
               fontWeight: FontWeight.bold,
               color: appBlack,
               fontSize: 25.sp,
@@ -205,7 +227,12 @@ class _SurahPageState extends State<SurahPage> {
     return const SizedBox();
   }
 
-  Widget _buildVerseItem(dynamic verse) {
+  Widget _buildVerseItem(Verses verse, String surahName, SurahState state) {
+    final bool isBookmarked = state.bookmarks.any((b) =>
+        b.surahNumber == verse.surah &&
+        b.verseIndex == verse.nomor &&
+        b.lastRead == false);
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10.h),
       child: Column(
@@ -216,9 +243,36 @@ class _SurahPageState extends State<SurahPage> {
             children: [
               IconButton(
                 color: appBlack,
-                onPressed: () {
-                  // TODO: Implement more options / bookmark
-                },
+                onPressed: () => ModalVerses.show(
+                  context: context,
+                  surahName: surahName,
+                  verseNumber: verse.nomor,
+                  isBookmarked: isBookmarked,
+                  onLastRead: () {
+                    context.read<SurahBloc>().add(
+                          AddLastReadEvent(
+                            surahProgress: SurahProgress(
+                              surahNameLatin: surahName,
+                              surahNumber: verse.surah,
+                              verseIndex: verse.nomor,
+                              lastRead: true,
+                            ),
+                          ),
+                        );
+                  },
+                  onBookmark: () {
+                    context.read<SurahBloc>().add(
+                          AddBookmarkEvent(
+                            surahProgress: SurahProgress(
+                              surahNameLatin: surahName,
+                              surahNumber: verse.surah,
+                              verseIndex: verse.nomor,
+                              lastRead: false,
+                            ),
+                          ),
+                        );
+                  },
+                ),
                 icon: const Icon(Icons.more_vert),
               ),
               Expanded(
@@ -280,10 +334,68 @@ class _SurahPageState extends State<SurahPage> {
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
           const Divider(thickness: 0.6, color: appBlack),
+        ],
+      ),
+    );
+  }
+
+  Widget _bottomBar(Surah surah) {
+    return Container(
+      width: double.infinity,
+      height: 75.h,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(color: Colors.white, boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.2),
+          spreadRadius: 1,
+          blurRadius: 2,
+        )
+      ]),
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Putar Surah',
+                style: TextStyle(
+                  color: Colors.grey.shade500,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                surah.nameLatin,
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
+          InkWell(
+            onTap: () {},
+            child: Container(
+              padding: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(20.r),
+                border: Border.all(width: 1.0, color: Colors.blue.shade300),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.play_arrow, color: Colors.green.shade200),
+                  const Text('Putar'),
+                  SizedBox(width: 5.w)
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width: 10.w),
         ],
       ),
     );

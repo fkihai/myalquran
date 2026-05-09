@@ -11,6 +11,8 @@ class TextCustom extends StatelessWidget {
   final TextOverflow? overflow;
   final double? height;
 
+  final String? fontFamily;
+
   const TextCustom(
     this.text, {
     super.key,
@@ -22,6 +24,7 @@ class TextCustom extends StatelessWidget {
     this.maxLines,
     this.overflow,
     this.height,
+    this.fontFamily,
   });
 
   @override
@@ -38,6 +41,7 @@ class TextCustom extends StatelessWidget {
         fontWeight: fontWeight,
         color: color,
         height: height,
+        fontFamily: fontFamily,
       ),
     );
   }

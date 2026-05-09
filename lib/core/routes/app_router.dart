@@ -4,6 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:myalquran/core/routes/route_names.dart';
 import 'package:myalquran/domain/repository/quran_repository.dart';
+import 'package:myalquran/domain/usecase/add_bookmark.dart';
+import 'package:myalquran/domain/usecase/add_lastread.dart';
+import 'package:myalquran/domain/usecase/delete_bookmark.dart';
 import 'package:myalquran/domain/usecase/get_all_bookmark.dart';
 import 'package:myalquran/domain/usecase/get_all_surah.dart';
 import 'package:myalquran/domain/usecase/get_detail_surah.dart';
@@ -35,7 +38,7 @@ final GoRouter router = GoRouter(
               final getLastRead = GetLastRead(
                 quranRepository: context.read<QuranRepository>(),
               );
-              return SurahListBloc(getAllSurah, getLastRead)
+              return SurahListBloc(getAllSurah, getLastRead, context.read<QuranRepository>())
                 ..add(FetchSurahEvent());
             },
           ),
@@ -46,8 +49,10 @@ final GoRouter router = GoRouter(
                   quranRepository: context.read<QuranRepository>());
               final getLastRead =
                   GetLastRead(quranRepository: context.read<QuranRepository>());
+              final deleteBookmark = DeleteBookmark(
+                  quranRepository: context.read<QuranRepository>());
 
-              return BookmarkBloc(getAllBookmark, getLastRead)
+              return BookmarkBloc(getAllBookmark, getLastRead, deleteBookmark, context.read<QuranRepository>())
                 ..add(LoadAllBookmark());
             },
           ),
@@ -76,9 +81,22 @@ final GoRouter router = GoRouter(
               quranRepository: context.read<QuranRepository>(),
             );
 
+            final addBookmark = AddBookmark(
+              quranRepository: context.read<QuranRepository>(),
+            );
+            final addLastRead = AddLastRead(
+              quranRepository: context.read<QuranRepository>(),
+            );
+            final getAllBookmark = GetAllBookmark(
+              quranRepository: context.read<QuranRepository>(),
+            );
+
             return SurahBloc(
               getDetailSurah: getDetailSurah,
               getAllSurah: getAllSurah,
+              addBookmark: addBookmark,
+              addLastRead: addLastRead,
+              getAllBookmark: getAllBookmark,
             )..add(LoadSurahEvent(surahNumber: nomorSurah));
           },
           child: SurahPage(verseIndex: verseIndex),

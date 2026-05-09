@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
 
 class SurahProgress extends Equatable {
-  final int id;
+  final int? id;
   final String surahNameLatin;
   final int surahNumber;
   final int verseIndex;
   final bool lastRead;
 
   const SurahProgress({
-    required this.id,
+    this.id,
     required this.surahNameLatin,
     required this.surahNumber,
     required this.verseIndex,
@@ -16,5 +16,5 @@ class SurahProgress extends Equatable {
   });
 
   @override
-  List<Object> get props => [id];
+  List<Object?> get props => [id, surahNameLatin, surahNumber, verseIndex, lastRead];
 }

@@ -18,10 +18,10 @@ class SurahProgressModel {
   factory SurahProgressModel.fromjson(Map<String, dynamic> json) {
     return SurahProgressModel(
       id: json['id'],
-      surahNameLatin: json['surah_name'],
-      surahNumber: json['surah_name_latih'],
+      surahNameLatin: json['surah_name_latin'],
+      surahNumber: json['surah_number'],
       verseIndex: json['verse_index'],
-      lastRead: json['lastRead'],
+      lastRead: json['last_read'] == 1,
     );
   }
 
@@ -31,13 +31,13 @@ class SurahProgressModel {
       'surah_name_latin': surahNameLatin,
       'surah_number': surahNumber,
       'verse_index': verseIndex,
-      'lastRead': lastRead == true ? 1 : 0,
+      'last_read': lastRead ? 1 : 0,
     };
   }
 
   SurahProgress toEntity() {
     return SurahProgress(
-      id: id ?? 0,
+      id: id,
       surahNameLatin: surahNameLatin ?? "",
       surahNumber: surahNumber ?? 0,
       verseIndex: verseIndex ?? 0,
@@ -47,6 +47,7 @@ class SurahProgressModel {
 
   factory SurahProgressModel.fromEntity(SurahProgress entity) {
     return SurahProgressModel(
+      id: entity.id,
       surahNameLatin: entity.surahNameLatin,
       surahNumber: entity.surahNumber,
       verseIndex: entity.verseIndex,

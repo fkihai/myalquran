@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
@@ -9,11 +10,16 @@ import '../models/surah_progress_model.dart';
 
 class LocalDatasource {
   final DatabaseManager database;
+  final _dbStreamController = StreamController<void>.broadcast();
+
   LocalDatasource(this.database);
+
+  Stream<void> get databaseStream => _dbStreamController.stream;
 
   Future<void> addBookmark(SurahProgressModel verses) async {
     Database db = await database.db;
     await db.insert("surah_progress", verses.toJson());
+    _dbStreamController.add(null);
   }
 
   Future<void> addLastRead(SurahProgressModel verses) async {
@@ -24,25 +30,34 @@ class LocalDatasource {
     }
 
     await db.insert('surah_progress', verses.toJson());
+    _dbStreamController.add(null);
   }
+
+  Future<void> deleteBookmark(int id) async {
+    Database db = await database.db;
+    await db.delete('surah_progress', where: 'id = ?', whereArgs: [id]);
+    _dbStreamController.add(null);
+  }
+
 
   Future<List<SurahProgressModel>> getAllBookmark() async {
     Database db = await database.db;
-    final List data = await db.query('bookmark', where: 'lastread = 0');
+    final List<Map<String, dynamic>> data =
+        await db.query('surah_progress', where: 'last_read = 0');
     List<SurahProgressModel> bookmarks =
         data.map((e) => SurahProgressModel.fromjson(e)).toList();
 
     return bookmarks;
   }
 
-  Future<SurahProgressModel> getLastRead() async {
+  Future<SurahProgressModel?> getLastRead() async {
     Database db = await database.db;
-    final List data =
-        await db.query('bookmark', where: 'lastread = ?', whereArgs: [0]);
-    List<SurahProgressModel> bookmarks =
-        data.map((e) => SurahProgressModel.fromjson(e)).toList();
-
-    return bookmarks.first;
+    final List<Map<String, dynamic>> data =
+        await db.query('surah_progress', where: 'last_read = 1');
+    
+    if (data.isEmpty) return null;
+    
+    return SurahProgressModel.fromjson(data.first);
   }
 
   Future<SurahModel> getDetailSurah({required int surahNumber}) async {

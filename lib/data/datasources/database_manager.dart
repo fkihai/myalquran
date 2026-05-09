@@ -17,7 +17,7 @@ class DatabaseManager {
 
   Future _initDB() async {
     Directory docDir = await getApplicationDocumentsDirectory();
-    String path = join(docDir.path, 'bookmark.db');
+    String path = join(docDir.path, 'quran_database.db');
 
     return await openDatabase(
       path,

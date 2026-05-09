@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:myalquran/core/constant/color.dart';
+import 'package:myalquran/core/routes/route_names.dart';
 import 'package:myalquran/features/home/bloc/bookmark/bookmark_bloc.dart';
 import 'package:myalquran/features/home/bloc/bookmark/bookmark_state.dart';
 import 'package:myalquran/features/home/bloc/surah_list/surah_list_bloc.dart';
 import 'package:myalquran/features/home/bloc/surah_list/surah_list_event.dart';
 import 'package:myalquran/features/home/bloc/surah_list/surah_list_state.dart';
+import 'package:myalquran/features/home/widgets/list_bookmark.dart';
 import 'package:myalquran/features/home/widgets/list_surah.dart';
 import 'package:myalquran/features/home/widgets/search_field.dart';
 import 'package:myalquran/shared/widgets/text_custom.dart';
@@ -99,7 +102,8 @@ class HomePage extends StatelessWidget {
                           return const Center(
                               child: CircularProgressIndicator());
                         } else if (state is BookmarkLoaded) {
-                          return const SizedBox();
+                          return ListBookmarkWidget(
+                              bookmarks: state.allBookmark);
                         } else {
                           return const SizedBox();
                         }
@@ -107,6 +111,43 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                 ),
+                BlocBuilder<SurahListBloc, SurahListState>(
+                    builder: (context, state) {
+                  if (state is SurahListLoaded && state.lastRead != null) {
+                    return InkWell(
+                      onTap: () {
+                        context.push(
+                          Routes.toDetailSurah(
+                            state.lastRead!.surahNumber,
+                            verseIndex: state.lastRead!.verseIndex - 1,
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(
+                              color: Colors.grey.withOpacity(0.2),
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        child: ListTile(
+                          dense: true,
+                          leading: const Icon(Icons.book),
+                          title: const TextCustom('Lanjutkan Membaca'),
+                          subtitle: TextCustom(
+                            "QS. ${state.lastRead?.surahNameLatin}: Ayat ${state.lastRead?.verseIndex}",
+                          ),
+                          trailing: const Icon(Icons.chevron_right),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                      ),
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
+                })
               ],
             ),
           ),

@@ -11,4 +11,6 @@ abstract class QuranRepository {
   Future<Either<Failure, SurahProgress>> getLastRead();
   Future<Either<Failure, Unit>> addBookmark(SurahProgress verses);
   Future<Either<Failure, Unit>> addLastRead(SurahProgress verses);
+  Future<Either<Failure, Unit>> deleteBookmark(int id);
+  Stream<void> watchDatabase();
 }

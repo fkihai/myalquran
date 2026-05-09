@@ -73,9 +73,27 @@ class QuranRepositoryImpl implements QuranRepository {
   Future<Either<Failure, SurahProgress>> getLastRead() async {
     try {
       final result = await localDatasource.getLastRead();
+      if (result == null) {
+        return left(const DatabaseFailure('No last read data'));
+      }
       return right(result.toEntity());
     } catch (e) {
       return left(DatabaseFailure(e.toString()));
     }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> deleteBookmark(int id) async {
+    try {
+      await localDatasource.deleteBookmark(id);
+      return right(unit);
+    } catch (e) {
+      return left(DatabaseFailure(e.toString()));
+    }
+  }
+
+  @override
+  Stream<void> watchDatabase() {
+    return localDatasource.databaseStream;
   }
 }

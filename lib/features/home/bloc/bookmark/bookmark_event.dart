@@ -6,3 +6,11 @@ class BookmarkEvent extends Equatable {
 }
 
 class LoadAllBookmark extends BookmarkEvent {}
+
+class DeleteBookmarkEvent extends BookmarkEvent {
+  final int id;
+  DeleteBookmarkEvent(this.id);
+
+  @override
+  List<Object> get props => [id];
+}
