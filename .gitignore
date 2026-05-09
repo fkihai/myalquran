@@ -1,48 +1,53 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
-migrate_working_dir/
-
-# IntelliJ related
+# Ignore IDE-specific files and directories
+.vscode/
+.idea/
 *.iml
 *.ipr
 *.iws
-.idea/
+.atom/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# Ignore OS-generated files and temporary files
+.DS_Store
+*.swp
+.history
+.buildlog/
 
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
+# Ignore log files
+*.log
+
+# Ignore compiled code and build artifacts
+*.class
+*.pyc
+/build/
+/android/app/debug/
+/android/app/profile/
+/android/app/release/
+
+# Ignore Flutter/Dart specific files and directories
 .dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
 .pub-cache/
 .pub/
-/build/
-
-# Symbolication related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.flutter-plugins
+.flutter-plugins-dependencies
 app.*.symbols
-
-# Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# Ignore version control and migration artifacts
+.svn/
+migrate_working_dir/
 
-# FVM Version Cache
+# Ignore Flutter Version Management (FVM) cache
 .fvm/
 
+# Ignore platform-specific build output directories
+ios/
+android/
+web/
+linux/
+macos/
+windows/
+
+# Other ignored files
 .todo

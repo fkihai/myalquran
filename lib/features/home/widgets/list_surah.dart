@@ -20,7 +20,7 @@ class ListSurahWidget extends StatelessWidget {
 
           return ListTile(
             onTap: () {
-              context.push(Routes.toDetailSurah(surah.nomor.toString()));
+              context.push(Routes.toDetailSurah(surah.nomor));
             },
             leading: Text(
               quran.getVerseEndSymbol(surah.nomor),

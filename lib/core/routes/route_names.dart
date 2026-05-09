@@ -1,7 +1,7 @@
 class Routes {
   static const home = '/';
-  static const surah = '/surah/:index';
+  static const surah = '/surah/:nomor';
 
   // helper
-  static String toDetailSurah(String id) => '/surah/$id';
+  static String toDetailSurah(int nomor) => '/surah/$nomor';
 }
