@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.haikaldev.myalquran">
+    package="com.connextly.myalquran">
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="My Quran"

@@ -1,5 +1,6 @@
 name: myalquran
-version: 1.0.0+1
+version: 2.0.0+2
+
 publish_to: none
 description: A new Flutter project.
 environment:

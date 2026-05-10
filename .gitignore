@@ -1,53 +1,71 @@
-# Ignore IDE-specific files and directories
+# -----------------------------------------------------------------------------
+# IDE and Editor Files
+# -----------------------------------------------------------------------------
 .vscode/
 .idea/
 *.iml
 *.ipr
 *.iws
 .atom/
+.history
 
-# Ignore OS-generated files and temporary files
+# -----------------------------------------------------------------------------
+# OS-specific Files
+# -----------------------------------------------------------------------------
 .DS_Store
 *.swp
-.history
-.buildlog/
 
-# Ignore log files
-*.log
-
-# Ignore compiled code and build artifacts
-*.class
-*.pyc
-/build/
-/android/app/debug/
-/android/app/profile/
-/android/app/release/
-
-# Ignore Flutter/Dart specific files and directories
+# -----------------------------------------------------------------------------
+# Flutter and Dart Specific
+# -----------------------------------------------------------------------------
 .dart_tool/
 .pub-cache/
 .pub/
-**/doc/api/
-**/ios/Flutter/.last_build_id
+.fvm/
 .flutter-plugins
 .flutter-plugins-dependencies
+/build/
+**/doc/api/
 app.*.symbols
 app.*.map.json
 
-# Ignore version control and migration artifacts
-.svn/
-migrate_working_dir/
-
-# Ignore Flutter Version Management (FVM) cache
-.fvm/
-
-# Ignore platform-specific build output directories
-ios/
+# -----------------------------------------------------------------------------
+# Platform-specific Folders
+# -----------------------------------------------------------------------------
+# Note: These folders are currently ignored entirely
 android/
+ios/
 web/
 linux/
 macos/
 windows/
 
-# Other ignored files
+# -----------------------------------------------------------------------------
+# Android-specific Artifacts and Secrets
+# -----------------------------------------------------------------------------
+/android/app/debug/
+/android/app/profile/
+/android/app/release/
+key.properties
+*.jks
+*.keystore
+
+# -----------------------------------------------------------------------------
+# iOS-specific Artifacts
+# -----------------------------------------------------------------------------
+**/ios/Flutter/.last_build_id
+
+# -----------------------------------------------------------------------------
+# Logs and Build Artifacts
+# -----------------------------------------------------------------------------
+*.log
+.buildlog/
+*.class
+*.pyc
+
+# -----------------------------------------------------------------------------
+# Miscellaneous
+# -----------------------------------------------------------------------------
+.svn/
+migrate_working_dir/
 .todo
