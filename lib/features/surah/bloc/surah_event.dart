@@ -1,18 +1,35 @@
-import 'package:myalquran/domain/entities/surah_progress.dart';
-
 abstract class SurahEvent {}
 
 class LoadSurahEvent extends SurahEvent {
   final int surahNumber;
-  LoadSurahEvent({required this.surahNumber});
+  final int? verseNumber;
+  LoadSurahEvent({this.verseNumber, required this.surahNumber});
 }
 
 class AddBookmarkEvent extends SurahEvent {
-  final SurahProgress surahProgress;
-  AddBookmarkEvent({required this.surahProgress});
+  final int surahId;
+  final int verseNumber;
+  final int juzNumber;
+  final String surahName;
+  AddBookmarkEvent({
+    required this.surahId,
+    required this.verseNumber,
+    required this.juzNumber,
+    required this.surahName,
+  });
 }
 
 class AddLastReadEvent extends SurahEvent {
-  final SurahProgress surahProgress;
-  AddLastReadEvent({required this.surahProgress});
+  final int surahId;
+  final int verseNumber;
+  final int juzNumber;
+  final String surahName;
+  AddLastReadEvent({
+    required this.surahId,
+    required this.verseNumber,
+    required this.juzNumber,
+    required this.surahName,
+  });
 }
+
+class ClearVerseNumberEvent extends SurahEvent {}

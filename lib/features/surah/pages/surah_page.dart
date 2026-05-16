@@ -12,11 +12,9 @@ import 'package:quran/quran.dart' as quran;
 import 'package:scroll_to_index/scroll_to_index.dart';
 
 import '../../../domain/entities/surah.dart';
-import '../../../domain/entities/surah_progress.dart';
 
 class SurahPage extends StatefulWidget {
-  final int? verseIndex;
-  const SurahPage({super.key, this.verseIndex});
+  const SurahPage({super.key});
 
   @override
   State<SurahPage> createState() => _SurahPageState();
@@ -25,6 +23,7 @@ class SurahPage extends StatefulWidget {
 class _SurahPageState extends State<SurahPage> with TickerProviderStateMixin {
   late AutoScrollController autoScrollController;
   TabController? tabController;
+  bool _isFirstScrollDone = false;
 
   @override
   void initState() {
@@ -47,20 +46,10 @@ class _SurahPageState extends State<SurahPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return BlocListener<SurahBloc, SurahState>(
       listener: (context, state) {
-        if (widget.verseIndex != null &&
-            state.detailSurah != null &&
-            !state.isLoading) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            autoScrollController.scrollToIndex(
-              widget.verseIndex!,
-              preferPosition: AutoScrollPosition.begin,
-            );
-          });
-        }
-
-        if (state.detailSurah != null && tabController != null) {
+        if (tabController != null) {
           final targetIndex = state.allSurah
-              .indexWhere((s) => s.nomor == state.detailSurah!.nomor);
+              .indexWhere((s) => s.number == state.currentSurahNumber);
+
           if (targetIndex != -1 && tabController!.index != targetIndex) {
             tabController!.animateTo(targetIndex);
           }
@@ -80,9 +69,24 @@ class _SurahPageState extends State<SurahPage> with TickerProviderStateMixin {
             );
           }
 
-          final initialIndex = state.detailSurah != null
+          // Trigger auto-scroll once when data is ready
+          if (!_isFirstScrollDone &&
+              state.currentVerseNumber != null &&
+              state.verseList != null &&
+              !state.isLoading) {
+            _isFirstScrollDone = true;
+            final scrollIndex = state.currentVerseNumber! - 1;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              autoScrollController.scrollToIndex(
+                scrollIndex,
+                preferPosition: AutoScrollPosition.begin,
+              );
+            });
+          }
+
+          final initialIndex = state.verseList != null
               ? state.allSurah
-                  .indexWhere((s) => s.nomor == state.detailSurah!.nomor)
+                  .indexWhere((s) => s.number == state.currentSurahNumber)
               : 0;
 
           // Ensure tabController is initialized if it's null or length changed
@@ -94,6 +98,21 @@ class _SurahPageState extends State<SurahPage> with TickerProviderStateMixin {
               initialIndex: initialIndex != -1 ? initialIndex : 0,
             );
           }
+
+          final currentSurah = state.allSurah.firstWhere(
+            (s) => s.number == state.currentSurahNumber,
+            orElse: () => state.allSurah.isNotEmpty
+                ? state.allSurah.first
+                : const Surah(
+                    id: 0,
+                    number: 0,
+                    nameArabic: '',
+                    nameLatin: '',
+                    nameTransliteration: '',
+                    numberOfAyahs: 0,
+                    revelationType: '',
+                  ),
+          );
 
           return Scaffold(
             appBar: AppBar(
@@ -109,7 +128,7 @@ class _SurahPageState extends State<SurahPage> with TickerProviderStateMixin {
                     controller: tabController,
                     onTap: (index) {
                       // Fetch detail for the selected Surah
-                      final surahNumber = state.allSurah[index].nomor;
+                      final surahNumber = state.allSurah[index].number;
                       context
                           .read<SurahBloc>()
                           .add(LoadSurahEvent(surahNumber: surahNumber));
@@ -120,7 +139,7 @@ class _SurahPageState extends State<SurahPage> with TickerProviderStateMixin {
                                 height: 30.h,
                                 child: Center(
                                   child: TextCustom(
-                                    s.nameLatin,
+                                    s.nameTransliteration,
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -135,14 +154,14 @@ class _SurahPageState extends State<SurahPage> with TickerProviderStateMixin {
                     controller: tabController,
                     physics: const NeverScrollableScrollPhysics(),
                     children: state.allSurah.map((surah) {
-                      // If this is the active tab and data matches the detailSurah
-                      if (state.detailSurah != null &&
-                          state.detailSurah!.nomor == surah.nomor) {
+                      // If this is the active tab and data matches the current surah
+                      if (state.verseList != null &&
+                          state.currentSurahNumber == surah.number) {
                         return ListView.builder(
                           controller: autoScrollController,
-                          itemCount: state.detailSurah!.verses.length,
+                          itemCount: state.verseList!.length,
                           itemBuilder: (context, index) {
-                            final verse = state.detailSurah!.verses[index];
+                            final verse = state.verseList![index];
                             return AutoScrollTag(
                               key: ValueKey(index),
                               controller: autoScrollController,
@@ -151,11 +170,14 @@ class _SurahPageState extends State<SurahPage> with TickerProviderStateMixin {
                                 children: [
                                   // Surah Title and Basmalah at the start of the list
                                   if (index == 0) ...[
-                                    _buildSurahTitle(surah),
-                                    _buildBasmalah(surah.nomor),
+                                    _buildSurahTitle(currentSurah),
+                                    _buildBasmalah(currentSurah.number),
                                   ],
                                   _buildVerseItem(
-                                      verse, surah.nameLatin, state),
+                                    verse,
+                                    surah.nameTransliteration,
+                                    state,
+                                  ),
                                 ],
                               ),
                             );
@@ -170,7 +192,9 @@ class _SurahPageState extends State<SurahPage> with TickerProviderStateMixin {
                     }).toList(),
                   ),
                 ),
-                if (state.detailSurah != null) _bottomBar(state.detailSurah!)
+
+                // note: // Temporarily disabled because audio source URLs are no longer accessible.
+                // if (state.verseList != null) _bottomBar(currentSurah)
               ],
             ),
           );
@@ -193,11 +217,11 @@ class _SurahPageState extends State<SurahPage> with TickerProviderStateMixin {
           fontWeight: FontWeight.bold,
         ),
         subtitle: TextCustom(
-          '${surah.totalVerses} Ayat | ${surah.revalationPlace}',
+          '${surah.numberOfAyahs} Ayat | ${surah.revelationType}',
           color: appWhite,
         ),
         trailing: TextCustom(
-          surah.name,
+          surah.nameArabic,
           fontFamily: 'Lpmq',
           fontSize: 30.sp,
           color: appWhite,
@@ -227,11 +251,10 @@ class _SurahPageState extends State<SurahPage> with TickerProviderStateMixin {
     return const SizedBox();
   }
 
-  Widget _buildVerseItem(Verses verse, String surahName, SurahState state) {
+  Widget _buildVerseItem(Verse verse, String surahName, SurahState state) {
     final bool isBookmarked = state.bookmarks.any((b) =>
-        b.surahNumber == verse.surah &&
-        b.verseIndex == verse.nomor &&
-        b.lastRead == false);
+        b.surahId == state.currentSurahNumber &&
+        b.verseNumber == verse.numberInSurah);
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10.h),
@@ -246,29 +269,25 @@ class _SurahPageState extends State<SurahPage> with TickerProviderStateMixin {
                 onPressed: () => ModalVerses.show(
                   context: context,
                   surahName: surahName,
-                  verseNumber: verse.nomor,
+                  verseNumber: verse.numberInSurah,
                   isBookmarked: isBookmarked,
                   onLastRead: () {
                     context.read<SurahBloc>().add(
                           AddLastReadEvent(
-                            surahProgress: SurahProgress(
-                              surahNameLatin: surahName,
-                              surahNumber: verse.surah,
-                              verseIndex: verse.nomor,
-                              lastRead: true,
-                            ),
+                            surahId: state.currentSurahNumber!,
+                            verseNumber: verse.numberInSurah,
+                            juzNumber: verse.juz,
+                            surahName: surahName,
                           ),
                         );
                   },
                   onBookmark: () {
                     context.read<SurahBloc>().add(
                           AddBookmarkEvent(
-                            surahProgress: SurahProgress(
-                              surahNameLatin: surahName,
-                              surahNumber: verse.surah,
-                              verseIndex: verse.nomor,
-                              lastRead: false,
-                            ),
+                            surahId: state.currentSurahNumber!,
+                            verseNumber: verse.numberInSurah,
+                            juzNumber: verse.juz,
+                            surahName: surahName,
                           ),
                         );
                   },
@@ -287,7 +306,7 @@ class _SurahPageState extends State<SurahPage> with TickerProviderStateMixin {
                             child: RichText(
                               textAlign: TextAlign.right,
                               text: TextSpan(
-                                text: '${verse.ar} ',
+                                text: '${verse.textUthmani} ',
                                 style: TextStyle(
                                   fontFamily: 'Lpmq',
                                   color: appBlueLight1,
@@ -297,7 +316,8 @@ class _SurahPageState extends State<SurahPage> with TickerProviderStateMixin {
                                 ),
                                 children: [
                                   TextSpan(
-                                    text: quran.getVerseEndSymbol(verse.nomor),
+                                    text: quran
+                                        .getVerseEndSymbol(verse.numberInSurah),
                                     style: TextStyle(
                                       fontFamily: 'Lpmq',
                                       color: appBlueLight1,
@@ -316,18 +336,9 @@ class _SurahPageState extends State<SurahPage> with TickerProviderStateMixin {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: TextCustom(
-                          verse.tr,
+                          verse.translation,
                           fontSize: 13.sp,
                           color: appBlueLight1,
-                          textAlign: TextAlign.start,
-                        ),
-                      ),
-                      SizedBox(height: 10.h),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: TextCustom(
-                          verse.idn,
-                          fontSize: 13.sp,
                           textAlign: TextAlign.start,
                         ),
                       ),
@@ -368,7 +379,7 @@ class _SurahPageState extends State<SurahPage> with TickerProviderStateMixin {
                 ),
               ),
               Text(
-                surah.nameLatin,
+                surah.nameTransliteration,
                 style: const TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.bold,

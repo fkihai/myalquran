@@ -1,23 +1,23 @@
 import 'package:bloc/bloc.dart';
 import 'package:myalquran/core/usecase/usecase.dart';
+import 'package:myalquran/domain/entities/last_read.dart';
 import 'package:myalquran/domain/entities/surah.dart';
-import 'package:myalquran/domain/entities/surah_progress.dart';
 import 'package:myalquran/domain/repository/quran_repository.dart';
-import 'package:myalquran/domain/usecase/get_all_surah.dart';
+import 'package:myalquran/domain/usecase/get_surah_list.dart';
 import 'package:myalquran/domain/usecase/get_last_read.dart';
 import 'package:myalquran/features/home/bloc/surah_list/surah_list_event.dart';
 import 'package:myalquran/features/home/bloc/surah_list/surah_list_state.dart';
 
 class SurahListBloc extends Bloc<SurahListEvent, SurahListState> {
-  final GetAllSurah getAllSurah;
+  final GetSurahList getListSurah;
   final GetLastRead getLastRead;
   final QuranRepository repository;
 
   List<Surah>? allSurah = [];
-  SurahProgress? lastRead;
+  LastRead? lastRead;
 
   SurahListBloc(
-    this.getAllSurah,
+    this.getListSurah,
     this.getLastRead,
     this.repository,
   ) : super(SurahListInitial()) {
@@ -35,7 +35,7 @@ class SurahListBloc extends Bloc<SurahListEvent, SurahListState> {
   ) async {
     emit(SurahListLoading());
 
-    final surahListResult = await getAllSurah(NoParams());
+    final surahListResult = await getListSurah(NoParams());
     final lastReadResult = await getLastRead(NoParams());
 
     lastRead = lastReadResult.fold((failure) => null, (result) => result);
@@ -65,7 +65,7 @@ class SurahListBloc extends Bloc<SurahListEvent, SurahListState> {
       emit(SurahListLoaded(allSurah: result ?? [], lastRead: lastRead));
     } else {
       result = allSurah
-          ?.where((element) => element.nameLatin
+          ?.where((element) => element.nameTransliteration
               .toLowerCase()
               .contains(event.value!.toLowerCase()))
           .toList();

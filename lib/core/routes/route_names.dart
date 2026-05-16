@@ -1,12 +1,12 @@
 class Routes {
   static const home = '/';
-  static const surah = '/surah/:nomor';
+  static const surah = '/surah/:surahNomor';
 
   // helper
-  static String toDetailSurah(int nomor, {int? verseIndex}) {
-    if (verseIndex != null) {
-      return '/surah/$nomor?verseIndex=$verseIndex';
+  static String toDetailSurah(int surahNomor, [int? verseNumber]) {
+    if (verseNumber != null) {
+      return '/surah/$surahNomor?verseNumber=$verseNumber';
     }
-    return '/surah/$nomor';
+    return '/surah/$surahNomor';
   }
 }

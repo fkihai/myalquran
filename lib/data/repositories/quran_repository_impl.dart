@@ -1,46 +1,55 @@
 import 'package:dartz/dartz.dart';
 import 'package:myalquran/core/error/failure.dart';
+import 'package:myalquran/core/network/api_exception.dart';
 import 'package:myalquran/data/datasources/local_datasource.dart';
-import 'package:myalquran/data/models/surah_progress_model.dart';
-import 'package:myalquran/domain/entities/surah_progress.dart';
+import 'package:myalquran/data/datasources/remote_datasource.dart';
+import 'package:myalquran/data/models/bookmark_model.dart';
+import 'package:myalquran/data/models/juz_model.dart';
+import 'package:myalquran/data/models/last_read_model.dart';
+import 'package:myalquran/data/models/verses_model.dart';
+import 'package:myalquran/domain/entities/bookmark.dart';
+import 'package:myalquran/domain/entities/last_read.dart';
+import 'package:myalquran/domain/entities/verses.dart';
 import 'package:myalquran/domain/repository/quran_repository.dart';
 
 import '../../domain/entities/surah.dart';
 
 class QuranRepositoryImpl implements QuranRepository {
   final LocalDatasource localDatasource;
+  final RemoteDatasource remoteDatasource;
 
-  QuranRepositoryImpl(this.localDatasource);
+  QuranRepositoryImpl(this.localDatasource, this.remoteDatasource);
 
   @override
-  Future<Either<Failure, List<Surah>>> getAllSurah() async {
+  Future<Either<Failure, List<Surah>>> getSurahList() async {
     try {
-      final result = await localDatasource.getAllSurah();
+      final result = await remoteDatasource.getSurahList();
       final surahs = result.map((e) => e.toEntity()).toList();
       return right(surahs);
+    } on ApiException catch (e) {
+      return left(ServerFailure(e.message));
+    } catch (e) {
+      return left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Verse>>> getVersesOfSurah(int surahNumber) async {
+    try {
+      final List<VerseModel> result =
+          await remoteDatasource.getVersesOfSurah(surahNumber);
+      final verseList = result.map((e) => e.toEntity()).toList();
+      return right(verseList);
     } catch (e) {
       return left(DatabaseFailure(e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, Surah>> getDetailSurah(int surahNumber) async {
+  Future<Either<Failure, Unit>> addBookmark(Bookmark bookmark) async {
     try {
-      final result = await localDatasource.getDetailSurah(
-        surahNumber: surahNumber,
-      );
-      final surah = result.toEntity();
-      return right(surah);
-    } catch (e) {
-      return left(DatabaseFailure(e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, Unit>> addBookmark(SurahProgress verses) async {
-    try {
-      final surahModel = SurahProgressModel.fromEntity(verses);
-      await localDatasource.addBookmark(surahModel);
+      final bookmarkModel = BookmarkModel.fromEntity(bookmark);
+      await localDatasource.addBookmark(bookmarkModel);
       return const Right(unit);
     } catch (e) {
       return left(DatabaseFailure(e.toString()));
@@ -48,10 +57,10 @@ class QuranRepositoryImpl implements QuranRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> addLastRead(SurahProgress verses) async {
+  Future<Either<Failure, Unit>> addLastRead(LastRead lastRead) async {
     try {
-      final surahModel = SurahProgressModel.fromEntity(verses);
-      await localDatasource.addLastRead(surahModel);
+      final lastReadModel = LastReadModel.fromEntity(lastRead);
+      await localDatasource.addLastRead(lastReadModel);
       return right(unit);
     } catch (e) {
       return left(DatabaseFailure(e.toString()));
@@ -59,18 +68,18 @@ class QuranRepositoryImpl implements QuranRepository {
   }
 
   @override
-  Future<Either<Failure, List<SurahProgress>>> getAllBookmark() async {
+  Future<Either<Failure, List<Bookmark>>> getAllBookmark() async {
     try {
       final result = await localDatasource.getAllBookmark();
-      final surahProgresses = result.map((e) => e.toEntity()).toList();
-      return right(surahProgresses);
+      final bookmark = result.map((e) => e.toEntity()).toList();
+      return right(bookmark);
     } catch (e) {
       return left(DatabaseFailure(e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, SurahProgress>> getLastRead() async {
+  Future<Either<Failure, LastRead>> getLastRead() async {
     try {
       final result = await localDatasource.getLastRead();
       if (result == null) {
@@ -95,5 +104,14 @@ class QuranRepositoryImpl implements QuranRepository {
   @override
   Stream<void> watchDatabase() {
     return localDatasource.databaseStream;
+  }
+
+  @override
+  Future<Either<Failure, List<Juz>>> getJuzList(int surahNumber) async {
+    try {
+      return right([] as List<Juz>);
+    } catch (e) {
+      return left(ServerFailure(e.toString()));
+    }
   }
 }

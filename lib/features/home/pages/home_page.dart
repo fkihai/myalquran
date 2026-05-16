@@ -103,7 +103,8 @@ class HomePage extends StatelessWidget {
                               child: CircularProgressIndicator());
                         } else if (state is BookmarkLoaded) {
                           return ListBookmarkWidget(
-                              bookmarks: state.allBookmark);
+                            bookmarks: state.allBookmark,
+                          );
                         } else {
                           return const SizedBox();
                         }
@@ -118,8 +119,8 @@ class HomePage extends StatelessWidget {
                       onTap: () {
                         context.push(
                           Routes.toDetailSurah(
-                            state.lastRead!.surahNumber,
-                            verseIndex: state.lastRead!.verseIndex - 1,
+                            state.lastRead!.surahId,
+                            state.lastRead!.verseNumber,
                           ),
                         );
                       },
@@ -137,7 +138,7 @@ class HomePage extends StatelessWidget {
                           leading: const Icon(Icons.book),
                           title: const TextCustom('Lanjutkan Membaca'),
                           subtitle: TextCustom(
-                            "QS. ${state.lastRead?.surahNameLatin}: Ayat ${state.lastRead?.verseIndex}",
+                            "QS. ${state.lastRead?.surahName}: Ayat ${state.lastRead?.verseNumber}",
                           ),
                           trailing: const Icon(Icons.chevron_right),
                           visualDensity: VisualDensity.compact,

@@ -27,13 +27,13 @@ class SurahTitle extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          '${surah!.nomor} Ayat | ${surah!.revalationPlace}',
+          '${surah!.number} Ayat | ${surah!.revelationType}',
           style: const TextStyle(
             color: appWhite,
           ),
         ),
         trailing: Text(
-          surah!.name,
+          surah!.nameLatin,
           style: const TextStyle(
             fontFamily: 'Lpmq',
             fontSize: 30,

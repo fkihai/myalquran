@@ -1,16 +1,18 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myalquran/core/usecase/usecase.dart';
+import 'package:myalquran/domain/entities/bookmark.dart';
+import 'package:myalquran/domain/entities/last_read.dart';
 import 'package:myalquran/domain/usecase/add_bookmark.dart';
 import 'package:myalquran/domain/usecase/add_lastread.dart';
 import 'package:myalquran/domain/usecase/get_all_bookmark.dart';
-import 'package:myalquran/domain/usecase/get_all_surah.dart';
-import 'package:myalquran/domain/usecase/get_detail_surah.dart';
+import 'package:myalquran/domain/usecase/get_surah_list.dart';
+import 'package:myalquran/domain/usecase/get_verse_list.dart';
 import 'package:myalquran/features/surah/bloc/surah_event.dart';
 import 'package:myalquran/features/surah/bloc/surah_state.dart';
 
 class SurahBloc extends Bloc<SurahEvent, SurahState> {
-  final GetDetailSurah getDetailSurah;
-  final GetAllSurah getAllSurah;
+  final GetVerseList getDetailSurah;
+  final GetSurahList getAllSurah;
   final AddBookmark addBookmark;
   final AddLastRead addLastRead;
   final GetAllBookmark getAllBookmark;
@@ -25,10 +27,19 @@ class SurahBloc extends Bloc<SurahEvent, SurahState> {
     on<LoadSurahEvent>(_loadSurah);
     on<AddBookmarkEvent>(_onAddBookmark);
     on<AddLastReadEvent>(_onAddLastRead);
+    on<ClearVerseNumberEvent>((event, emit) => emit(state.copyWith(currentVerseNumber: null)));
   }
 
   void _onAddBookmark(AddBookmarkEvent event, Emitter<SurahState> emit) async {
-    final result = await addBookmark(event.surahProgress);
+    final bookmark = Bookmark(
+      surahId: event.surahId,
+      verseNumber: event.verseNumber,
+      juzNumber: event.juzNumber,
+      surahName: event.surahName,
+      createdAt: DateTime.now(),
+    );
+
+    final result = await addBookmark(bookmark);
     await result.fold(
       (l) async => emit(state.copyWith(errorMessage: l.message)),
       (r) async {
@@ -42,12 +53,19 @@ class SurahBloc extends Bloc<SurahEvent, SurahState> {
   }
 
   void _onAddLastRead(AddLastReadEvent event, Emitter<SurahState> emit) async {
-    final result = await addLastRead(event.surahProgress);
+    final lastRead = LastRead(
+      surahId: event.surahId,
+      verseNumber: event.verseNumber,
+      juzNumber: event.juzNumber,
+      surahName: event.surahName,
+      updatedAt: DateTime.now(),
+    );
+
+    final result = await addLastRead(lastRead);
     await result.fold(
       (l) async => emit(state.copyWith(errorMessage: l.message)),
       (r) async {
-        // We might not need to update bookmarks list if lastRead is separate,
-        // but let's refresh anyway to be safe and consistent.
+        // Refresh bookmarks to keep state consistent
         final bookmarks = await getAllBookmark(NoParams());
         bookmarks.fold(
           (l) => emit(state.copyWith(errorMessage: l.message)),
@@ -58,7 +76,14 @@ class SurahBloc extends Bloc<SurahEvent, SurahState> {
   }
 
   void _loadSurah(LoadSurahEvent event, Emitter<SurahState> emit) async {
-    emit(state.copyWith(isLoading: true, errorMessage: null));
+    emit(
+      state.copyWith(
+        currentSurahNumber: event.surahNumber,
+        currentVerseNumber: event.verseNumber,
+        isLoading: true,
+        errorMessage: null,
+      ),
+    );
 
     // 1. Fetch Tab List if empty
     if (state.allSurah.isEmpty) {
@@ -83,7 +108,7 @@ class SurahBloc extends Bloc<SurahEvent, SurahState> {
 
     surah.fold(
       (l) => emit(state.copyWith(isLoading: false, errorMessage: l.message)),
-      (r) => emit(state.copyWith(isLoading: false, detailSurah: r)),
+      (r) => emit(state.copyWith(isLoading: false, verseList: r)),
     );
   }
 }

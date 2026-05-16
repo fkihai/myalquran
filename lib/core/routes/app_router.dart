@@ -3,13 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:myalquran/core/routes/route_names.dart';
+import 'package:myalquran/domain/entities/surah.dart';
 import 'package:myalquran/domain/repository/quran_repository.dart';
 import 'package:myalquran/domain/usecase/add_bookmark.dart';
 import 'package:myalquran/domain/usecase/add_lastread.dart';
 import 'package:myalquran/domain/usecase/delete_bookmark.dart';
 import 'package:myalquran/domain/usecase/get_all_bookmark.dart';
-import 'package:myalquran/domain/usecase/get_all_surah.dart';
-import 'package:myalquran/domain/usecase/get_detail_surah.dart';
+import 'package:myalquran/domain/usecase/get_surah_list.dart';
+import 'package:myalquran/domain/usecase/get_verse_list.dart';
 import 'package:myalquran/domain/usecase/get_last_read.dart';
 import 'package:myalquran/features/home/bloc/bookmark/bookmark_bloc.dart';
 import 'package:myalquran/features/home/bloc/bookmark/bookmark_event.dart';
@@ -20,7 +21,6 @@ import 'package:myalquran/features/surah/bloc/surah_bloc.dart';
 import 'package:myalquran/features/surah/bloc/surah_event.dart';
 import 'package:myalquran/features/surah/pages/surah_page.dart';
 import 'package:myalquran/shared/widgets/text_custom.dart';
-import 'package:quran/surah_data.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: Routes.home,
@@ -32,13 +32,14 @@ final GoRouter router = GoRouter(
           BlocProvider(
             create: (context) {
               // usecase
-              final getAllSurah = GetAllSurah(
+              final getAllSurah = GetSurahList(
                 quranRepository: context.read<QuranRepository>(),
               );
               final getLastRead = GetLastRead(
                 quranRepository: context.read<QuranRepository>(),
               );
-              return SurahListBloc(getAllSurah, getLastRead, context.read<QuranRepository>())
+              return SurahListBloc(
+                  getAllSurah, getLastRead, context.read<QuranRepository>())
                 ..add(FetchSurahEvent());
             },
           ),
@@ -52,7 +53,8 @@ final GoRouter router = GoRouter(
               final deleteBookmark = DeleteBookmark(
                   quranRepository: context.read<QuranRepository>());
 
-              return BookmarkBloc(getAllBookmark, getLastRead, deleteBookmark, context.read<QuranRepository>())
+              return BookmarkBloc(getAllBookmark, getLastRead, deleteBookmark,
+                  context.read<QuranRepository>())
                 ..add(LoadAllBookmark());
             },
           ),
@@ -64,9 +66,10 @@ final GoRouter router = GoRouter(
       path: Routes.surah,
       builder: (context, state) {
         final int? nomorSurah =
-            int.tryParse(state.pathParameters['nomor'] ?? "");
-        final int? verseIndex =
-            int.tryParse(state.uri.queryParameters['verseIndex'] ?? "");
+            int.tryParse(state.pathParameters['surahNomor'] ?? "");
+
+        final int? verseNumber =
+            int.tryParse(state.uri.queryParameters['verseNumber'] ?? "");
 
         if (nomorSurah == null || nomorSurah == 0) {
           return const NotFoundPage();
@@ -74,10 +77,10 @@ final GoRouter router = GoRouter(
 
         return BlocProvider(
           create: (context) {
-            final getDetailSurah = GetDetailSurah(
+            final getDetailSurah = GetVerseList(
               quranRepository: context.read<QuranRepository>(),
             );
-            final getAllSurah = GetAllSurah(
+            final getAllSurah = GetSurahList(
               quranRepository: context.read<QuranRepository>(),
             );
 
@@ -97,9 +100,14 @@ final GoRouter router = GoRouter(
               addBookmark: addBookmark,
               addLastRead: addLastRead,
               getAllBookmark: getAllBookmark,
-            )..add(LoadSurahEvent(surahNumber: nomorSurah));
+            )..add(
+                LoadSurahEvent(
+                  surahNumber: nomorSurah,
+                  verseNumber: verseNumber,
+                ),
+              );
           },
-          child: SurahPage(verseIndex: verseIndex),
+          child: const SurahPage(),
         );
       },
     )

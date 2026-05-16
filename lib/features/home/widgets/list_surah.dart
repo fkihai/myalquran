@@ -20,17 +20,17 @@ class ListSurahWidget extends StatelessWidget {
 
           return ListTile(
             onTap: () {
-              context.push(Routes.toDetailSurah(surah.nomor));
+              context.push(Routes.toDetailSurah(surah.number));
             },
             leading: Text(
-              quran.getVerseEndSymbol(surah.nomor),
+              quran.getVerseEndSymbol(surah.number),
               style: const TextStyle(
                 color: appBlueLight1,
                 fontSize: 27,
               ),
             ),
             title: Text(
-              surah.nameLatin,
+              surah.nameTransliteration,
               style: const TextStyle(
                 color: appBlueLight1,
                 fontWeight: FontWeight.bold,
@@ -40,7 +40,7 @@ class ListSurahWidget extends StatelessWidget {
             subtitle: Padding(
               padding: EdgeInsets.only(top: 5.h),
               child: Text(
-                '${surah.totalVerses} ayat | ${surah.revalationPlace}',
+                '${surah.numberOfAyahs} ayah | ${surah.revelationType}',
                 style: const TextStyle(
                   color: appGrey,
                   fontSize: 14,
@@ -48,7 +48,7 @@ class ListSurahWidget extends StatelessWidget {
               ),
             ),
             trailing: Text(
-              surah.name,
+              surah.nameArabic,
               style: const TextStyle(
                 fontFamily: 'Lpmq',
                 color: appBlueLight1,

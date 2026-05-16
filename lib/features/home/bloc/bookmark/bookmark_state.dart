@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:myalquran/domain/entities/surah_progress.dart';
+import 'package:myalquran/domain/entities/bookmark.dart';
 
 class BookmarkState extends Equatable {
   @override
@@ -11,7 +11,7 @@ class BookmarkInitial extends BookmarkState {}
 class BookmarkLoading extends BookmarkState {}
 
 class BookmarkLoaded extends BookmarkState {
-  final List<SurahProgress> allBookmark;
+  final List<Bookmark> allBookmark;
   BookmarkLoaded({required this.allBookmark});
 
   @override

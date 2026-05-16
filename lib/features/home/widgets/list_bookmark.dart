@@ -3,13 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:myalquran/core/routes/route_names.dart';
-import 'package:myalquran/domain/entities/surah_progress.dart';
+import 'package:myalquran/domain/entities/bookmark.dart';
 import 'package:myalquran/features/home/bloc/bookmark/bookmark_bloc.dart';
 import 'package:myalquran/features/home/bloc/bookmark/bookmark_event.dart';
 import 'package:myalquran/shared/widgets/text_custom.dart';
 
 class ListBookmarkWidget extends StatelessWidget {
-  final List<SurahProgress> bookmarks;
+  final List<Bookmark> bookmarks;
   const ListBookmarkWidget({super.key, required this.bookmarks});
 
   @override
@@ -29,8 +29,8 @@ class ListBookmarkWidget extends StatelessWidget {
           onTap: () {
             context.push(
               Routes.toDetailSurah(
-                bookmark.surahNumber,
-                verseIndex: bookmark.verseIndex - 1,
+                bookmark.surahId,
+                bookmark.verseNumber,
               ),
             );
           },
@@ -77,7 +77,7 @@ class ListBookmarkWidget extends StatelessWidget {
                 ),
                 SizedBox(width: 10.w),
                 TextCustom(
-                  'QS. ${bookmark.surahNameLatin} : Ayat ${bookmark.verseIndex}',
+                  'QS. ${bookmark.surahName} : Ayat ${bookmark.verseNumber}',
                   fontSize: 14.sp,
                   color: Colors.black,
                 ),

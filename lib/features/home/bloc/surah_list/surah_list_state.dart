@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:myalquran/domain/entities/surah_progress.dart';
+import 'package:myalquran/domain/entities/last_read.dart';
 
 import '../../../../domain/entities/surah.dart';
 
@@ -18,7 +18,7 @@ class SurahListLoading extends SurahListState {
 
 class SurahListLoaded extends SurahListState {
   final List<Surah> allSurah;
-  final SurahProgress? lastRead;
+  final LastRead? lastRead;
 
   SurahListLoaded({this.lastRead, required this.allSurah});
 

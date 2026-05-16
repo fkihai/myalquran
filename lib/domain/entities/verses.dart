@@ -1,22 +1,26 @@
 import 'package:equatable/equatable.dart';
 
-class Verses extends Equatable {
-  final int id;
-  final int surah;
-  final int nomor;
-  final String ar;
-  final String tr;
-  final String idn;
+class Verse extends Equatable {
+  final int number;
+  final int numberInSurah;
+  final String textUthmani;
+  final String translation;
+  final int juz;
 
-  const Verses({
-    required this.id,
-    required this.surah,
-    required this.nomor,
-    required this.ar,
-    required this.tr,
-    required this.idn,
+  const Verse({
+    required this.number,
+    required this.numberInSurah,
+    required this.textUthmani,
+    required this.translation,
+    required this.juz,
   });
 
   @override
-  List<Object> get props => [id];
+  List<Object?> get props => [
+        number,
+        numberInSurah,
+        textUthmani,
+        translation,
+        juz,
+      ];
 }
